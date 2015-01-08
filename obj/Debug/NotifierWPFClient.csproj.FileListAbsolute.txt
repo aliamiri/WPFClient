@@ -1,0 +1,13 @@
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\WpfApplication2.exe.config
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\WpfApplication2.exe
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\WpfApplication2.pdb
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\WpfApplication2.exe
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\WpfApplication2.pdb
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\NotifierWPFClient.csprojResolveAssemblyReference.cache
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\MainWindow.baml
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\MainWindow.g.cs
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\App.g.cs
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\WpfApplication2_MarkupCompile.cache
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\WpfApplication2.g.resources
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\WpfNotifierClient.Properties.Resources.resources
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\NotifierWPFClient.csproj.GenerateResource.Cache
