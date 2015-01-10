@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace WpfApplication2
+namespace WpfNotifierClient
 {
     class DbConnection
     {
@@ -14,8 +15,9 @@ namespace WpfApplication2
         {
             try
             {
+                string connectionString = ConfigurationManager.ConnectionStrings["DbAddr"].ConnectionString;
                 _connection =
-                    new SqlConnection(@"Server=localhost\sqlexpress;Database=PersianSwitch;Trusted_Connection=True;");
+                    new SqlConnection(connectionString);
             }
             catch (SqlException)
             {

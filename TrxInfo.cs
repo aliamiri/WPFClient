@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WpfApplication2
+namespace WpfNotifierClient
 {
     class TrxInfo
     {
@@ -36,6 +36,14 @@ namespace WpfApplication2
         public DateTime GetTrxDate()
         {
             return this._trxDate;
+        }
+
+        public string Details
+        {
+            get
+            {
+                return String.Format("dartarikhe {0} mablaghe {1} bakarteIn {2} kharidarishod", _trxDate.ToShortTimeString(), _amount , _cardNo);
+            }
         }
     }
 }

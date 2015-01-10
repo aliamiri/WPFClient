@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+using System.Configuration;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Threading;
-using WpfApplication2;
 
 namespace WpfNotifierClient
 {
@@ -21,7 +20,7 @@ namespace WpfNotifierClient
     
         private string ReadAsync()
         {
-            Stream stm = tcpclnt.GetStream();
+            Stream stm = _tcpClient.GetStream();
             ASCIIEncoding asen = new ASCIIEncoding();
 
             byte[] bb = new byte[100];
@@ -34,15 +33,16 @@ namespace WpfNotifierClient
             return stbldr.ToString();
         }
 
-        public delegate void NextPrimeDelegate(); 
+        public delegate void NextPrimeDelegate();
 
-        List<TrxInfo> _trxInfos = new List<TrxInfo>();
+        readonly List<TrxInfo> _trxInfos = new List<TrxInfo>();
 
-        TaskbarNotifier _taskbarNotifier;
-        //OleDbConnection con;
+        readonly TaskbarNotifier _taskbarNotifier;
+
         private int _index = 0;
-        private DbConnection _connection;
-        TcpClient tcpclnt = new TcpClient();
+        private readonly DbConnection _connection;
+        readonly TcpClient _tcpClient = new TcpClient();
+
         public MainWindow()
         {
             try
@@ -58,9 +58,42 @@ namespace WpfNotifierClient
             _taskbarNotifier = new TaskbarNotifier();
             
             dgUsers.ItemsSource = _trxInfos;
+
+           // CheckFistTime();
         }
 
-        public async void CheckNextNumber()
+
+        private TrxInfo InputParser(string input)
+        {
+            var values = input.Split(new string[]{";"}, StringSplitOptions.None);
+            var trxInfo = new TrxInfo();
+            int intIn;
+            if (int.TryParse(values[0],out intIn))
+                trxInfo.SetAmount(intIn);
+            DateTime timeIn;
+            if (DateTime.TryParse(values[1], out timeIn))
+                trxInfo.SetTrxDate(timeIn);
+            trxInfo.SetCardNo(values[2]);
+            return null;
+        }
+
+        private void CheckFistTime()
+        {
+            var appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var configFile = Path.Combine(appPath, "App.config");
+            var isFirstTime = ConfigurationManager.AppSettings["isFirstTime"];
+            if (isFirstTime.Equals("true"))
+            {
+                var configFileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
+                Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+                config.AppSettings.Settings["isFirstTime"].Value = "false";
+                config.Save(ConfigurationSaveMode.Full);    
+                //TODO configuration for database
+                //TODO show a window to set merchant name and this type of ...
+            }
+        }
+
+        public async void AsyncFill()
         {
             _index++;
             if (_index > 10)
@@ -68,40 +101,38 @@ namespace WpfNotifierClient
                 _trxInfos.RemoveAt(0);
                 _index--;
             }
-            var slowTask = Task<string>.Factory.StartNew(() => ReadAsync());
-
-            // for (int j = 0; j < 10; j++ )
+            var slowTask = Task<string>.Factory.StartNew(ReadAsync);
+            
             await slowTask;
 
             string retVal = slowTask.Result;
 
-            TrxInfo info = new TrxInfo();
-            info.SetAmount(100);
-            info.SetTrxDate(DateTime.Now);
-            info.SetCardNo(retVal);
+            var info = InputParser(retVal);
 
             _trxInfos.Add(info);
             dgUsers.ItemsSource = null;
             dgUsers.ItemsSource = _trxInfos;
-            _taskbarNotifier.Show("persian switch", retVal, 500, 1000, 500);
+            _taskbarNotifier.Show("خرید جدید", info.Details, 500, 1000, 500);
 
             _connection.InsertInDb(info);
 
             StartStopButton.Dispatcher.BeginInvoke(
                 DispatcherPriority.SystemIdle,
-                new NextPrimeDelegate(this.CheckNextNumber));
+                new NextPrimeDelegate(this.AsyncFill));
 
         }
 
         private void Start(object sender, RoutedEventArgs e)
         {
-            tcpclnt.Connect("127.0.0.1", 2001);
+            var serverIp = ConfigurationManager.AppSettings["serverIp"];
+            var serverPort = int.Parse(ConfigurationManager.AppSettings["serverPort"]);
 
-            StartStopButton.Content = "Stop";
+            MessageBox.Show(serverIp);
+            _tcpClient.Connect(serverIp,serverPort);
+
             StartStopButton.Dispatcher.BeginInvoke(
                 DispatcherPriority.Normal,
-                new NextPrimeDelegate(CheckNextNumber));
-
+                new NextPrimeDelegate(AsyncFill));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
