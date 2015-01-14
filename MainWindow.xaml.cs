@@ -5,10 +5,10 @@ using System.Configuration;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Threading;
 using  NLog;
 
 namespace WpfNotifierClient
@@ -181,10 +181,10 @@ namespace WpfNotifierClient
             }
             catch (SocketException ex)
             {
-                ReconnectButton.Visibility = Visibility.Visible;
                 _logger.Error("TCP Connection failed with this error : " +  ex.Message);
                 MessageBox.Show("امکان ارتباط با سرور برقرار نمیباشد. اتصال شبکه خود را چک کنید.");
                 MessageBox.Show("از برنامه در حالت آفلاین استفاده خواهید کرد");
+                ReconnectButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -208,6 +208,20 @@ namespace WpfNotifierClient
                 loginForm.Background = Brushes.Crimson;
             }
         }
+
+        private void MenuItem_lock(object sender, RoutedEventArgs e)
+        {
+            txtPassword.Password = "";
+            txtName.Text = "";
+            LoginLayer.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_IntervalReport(object sender, RoutedEventArgs e)
+        {
+            var window = new IntervalReportWindow();
+            window.Show();
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

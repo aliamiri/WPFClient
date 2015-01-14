@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -78,14 +79,47 @@ namespace WpfNotifierClient
             {
                 _logger.Trace("insert data : " +  info.Details);
                 _connection.Open();
-                string query = "INSERT INTO asanTrxInfo (TrxDate,CardNo,Amount) VALUES('" + info.TrxDate.ToDateTime() + "','" + info.CardNo + "'," + info.Amount + ")";
-                SQLiteCommand command = _connection.CreateCommand();
+                var query = "INSERT INTO asanTrxInfo (TrxDate,CardNo,Amount) VALUES('" + info.TrxDate.ToDateTime() + "','" + info.CardNo + "'," + info.Amount + ")";
+                var command = _connection.CreateCommand();
                 command.CommandText = query;
                 command.ExecuteNonQuery();
             }
             catch (Exception e)
             {
                 _logger.Error("an exception occured : " + e.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public List<TrxInfo> SelectFromDb(DateTime start, DateTime end)
+        {
+            try
+            {
+                _connection.Open();
+                var query = "SELECT * FROM asanTrxInfo where TrxDate>'" + start.Date + "' and TrxDate<'" + end.Date + "';";
+                var command = _connection.CreateCommand();
+                command.CommandText = query;
+                var sqLiteDataReader = command.ExecuteReader();
+
+                List<TrxInfo> retList = new List<TrxInfo>();
+                while (sqLiteDataReader.Read())
+                {
+                    TrxInfo info = new TrxInfo();
+                    info.TrxDate = new PersianDateTime(Convert.ToDateTime(sqLiteDataReader.GetString(1)));
+                    info.CardNo = sqLiteDataReader.GetString(2);
+                    info.Amount = sqLiteDataReader.GetInt32(3);
+                    retList.Add(info);
+                }
+
+                return retList;
+            }
+            catch (Exception e)
+            {
+                _logger.Error("an exception occured : " + e.Message);
+                return null;
             }
             finally
             {
