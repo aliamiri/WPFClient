@@ -1,97 +1,96 @@
 ﻿using System;
 using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using System.Windows;
+using System.Data.SQLite;
+using System.IO;
+using NLog;
+
 
 namespace WpfNotifierClient
 {
     class DbConnection
     {
-        private static SqlConnection _connection;
+        private static SQLiteConnection _connection;
 
-        //TODO dont forget NLog
-
+        Logger _logger = LogManager.GetCurrentClassLogger();
+        
         public void CreateConnection()
         {
+            _logger.Info("start to create a connection");
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["DbAddr"].ConnectionString;
-                _connection =
-                    new SqlConnection(connectionString);
-            }
-            catch (SqlException)
-            {
+                _logger.Info("get address of AppData folder");
+                var localAppData =
+                      Environment.GetFolderPath(
+                      Environment.SpecialFolder.LocalApplicationData);
                 
+                var userFilePath
+                  = Path.Combine(localAppData, "AsanPardakht");
+
+                _logger.Info("create a directory with our name in AppData folder");
+                if (!Directory.Exists(userFilePath))
+                    Directory.CreateDirectory(userFilePath);
+
+                var destFilePath = Path.Combine(userFilePath, "persianSwitch.db");
+
+                _connection = new SQLiteConnection("data source=" + destFilePath);
+
+                CheckDbExistance();
             }
+            catch (Exception exception)
+            {
+                _logger.Error("an error occured" +  exception.Message);
+                throw;
+            }
+        }
+
+        private void CheckDbExistance()
+        {
+            _connection.Open();
+
+            var sqliteCmd = _connection.CreateCommand();
+
+            sqliteCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='asanTrxInfo';";
+
+            var sqliteDatareader = sqliteCmd.ExecuteReader();
+
+            _logger.Info("check if out database exist or not");
+            if (!sqliteDatareader.HasRows)
+            {
+                _logger.Info("if it is a first time create our database");
+                sqliteDatareader.Close();
+                sqliteCmd.CommandText =
+                    "CREATE TABLE asanTrxInfo(id integer primary key, TrxDate DateTime,CardNo varchar(20),Amount integer );";
+                sqliteCmd.ExecuteNonQuery();
+            }
+
+            if (!sqliteDatareader.IsClosed)
+            {
+                sqliteDatareader.Close();
+            }
+            _connection.Close();
         }
 
         public void InsertInDb(TrxInfo info)
         {
             try
             {
+                _logger.Trace("insert data : " +  info.Details);
                 _connection.Open();
-
-                String query = "INSERT INTO TrxInfo (TrxDate,CardNo,Amount) VALUES(@TrxDate,@CardNo,@Amount)";
-
-                SqlCommand command = new SqlCommand(query, _connection);
-
-                command.Parameters.Add("@CardNo", SqlDbType.VarChar);
-                command.Parameters["@CardNo"].Value = info.GetCardNo();
-                command.Parameters.Add("@TrxDate", SqlDbType.DateTime);
-                command.Parameters["@TrxDate"].Value = info.GetTrxDate();
-                command.Parameters.Add("@Amount", SqlDbType.Int);
-                command.Parameters["@Amount"].Value = info.GetAmount();
+                string query = "INSERT INTO asanTrxInfo (TrxDate,CardNo,Amount) VALUES('" + info.TrxDate.ToDateTime() + "','" + info.CardNo + "'," + info.Amount + ")";
+                SQLiteCommand command = _connection.CreateCommand();
+                command.CommandText = query;
                 command.ExecuteNonQuery();
             }
             catch (Exception e)
             {
-
+                _logger.Error("an exception occured : " + e.Message);
             }
             finally
             {
                 _connection.Close();
             }
         }
-
-        public void CheckDbExistance()
-        {
-            //TODO do some stuff here :D
-        }
-
-        public void CreateDb()
-        {
-            //TODO must change the name and drives and ...
-            String str;
-            SqlConnection myConn = new SqlConnection(@"Server=localhost\sqlexpress;Database=master;Trusted_Connection=True;");
-
-            str = "CREATE DATABASE PersianSwitch ON PRIMARY " +
-                "(NAME = PersianSwitch_Data, " +
-                "FILENAME = 'C:\\PersianSwitchData.mdf', " +
-                "SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%) " +
-                "LOG ON (NAME = MyDatabase_Log, " +
-                "FILENAME = 'C:\\PersianSwitchLog.ldf', " +
-                "SIZE = 1MB, " +
-                "MAXSIZE = 5MB, " +
-                "FILEGROWTH = 10%)";
-
-
-            SqlCommand myCommand = new SqlCommand(str, myConn);
-            try
-            {
-                myConn.Open();
-                myCommand.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-            }
-            finally
-            {
-                if (myConn.State == ConnectionState.Open)
-                {
-                    myConn.Close();
-                }
-            }
-        }
-
     }
 }

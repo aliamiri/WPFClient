@@ -1,0 +1,8 @@
+2015-01-14 11:59:36.3418 INFO Program starts
+2015-01-14 11:59:36.5858 TRACE Initilization
+2015-01-14 11:59:36.6858 INFO start to create a connection
+2015-01-14 11:59:36.6858 INFO get address of AppData folder
+2015-01-14 11:59:36.6858 INFO create a directory with our name in AppData folder
+2015-01-14 11:59:37.0059 INFO check if out database exist or not
+2015-01-14 11:59:37.1119 INFO before connecting to TCP with address : 192.168.10.38 on port : 2001
+2015-01-14 11:59:38.1850 ERROR TCP Connection failed with this error : No connection could be made because the target machine actively refused it 192.168.10.38:2001

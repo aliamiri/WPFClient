@@ -4,45 +4,26 @@ namespace WpfNotifierClient
 {
     class TrxInfo
     {
-        private DateTime _trxDate;
-        private string _cardNo;
-        private int _amount;
+        //Because I want to show this fields in grid I have to make this fields public
+        public PersianDateTime TrxDate { get; set; }
+        public string CardNo { get; set; }
+        public int Amount { get; set; }
 
-        public void SetAmount(int inAmount)
+        public TrxInfo() { }
+
+        public TrxInfo(PersianDateTime date,string card,int amount)
         {
-            this._amount = inAmount;
+            Amount = amount;
+            CardNo = card;
+            TrxDate = date;
         }
 
-        public void SetCardNo(string card)
-        {
-            this._cardNo = card;
-        }
-
-        public void SetTrxDate(DateTime time)
-        {
-            this._trxDate = time;
-        }
-
-        public int GetAmount()
-        {
-            return this._amount;
-        }
-
-        public string GetCardNo()
-        {
-            return this._cardNo;
-        }
-
-        public DateTime GetTrxDate()
-        {
-            return this._trxDate;
-        }
 
         public string Details
         {
             get
             {
-                return String.Format("dartarikhe {0} mablaghe {1} bakarteIn {2} kharidarishod", _trxDate.ToShortTimeString(), _amount , _cardNo);
+                return String.Format("در ساعت {0} مبلغ {1} ریال با کارت به شماره {2} خریداری شد.", TrxDate.TimeOfDay.ToHHMMSS(), Amount , CardNo);
             }
         }
     }

@@ -88,12 +88,12 @@ namespace WpfNotifierClient
             timer.Enabled = true;
             timer.Tick += new EventHandler(OnTimer);
 
-            Type type = GetType();
-            Bitmap bitmap = new Bitmap(type, "skin4.bmp");
-            Color transparencyColor = Color.FromArgb(255, 0, 255);
+            var type = GetType();
+            var bitmap = new Bitmap(type, "logo.bmp");
+            var transparencyColor = Color.FromArgb(255, 0, 255);
             SetBackgroundBitmap(bitmap, transparencyColor);
             SetCloseBitmap(new Bitmap(type, "close.bmp"), transparencyColor, new Point(240, 8));
-            TitleRectangle = new Rectangle(40, 9, 240, 25);
+            TitleRectangle = new Rectangle(140, 9, 240, 25);
             ContentRectangle = new Rectangle(8, 41, 240, 68);
             CloseClickable = true;
             TitleClickable = true;
@@ -311,8 +311,7 @@ namespace WpfNotifierClient
         #endregion
 
         #region TaskbarNotifier Public Methods
-       // [DllImport("user32.dll")]
-        [DllImport("gdi32.dll")]
+        [DllImport("user32.dll")]
         private static extern Boolean ShowWindow(IntPtr hWnd, Int32 nCmdShow);
         /// <summary>
         /// Displays the popup for a certain amount of time
