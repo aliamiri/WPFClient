@@ -1,13 +1,12 @@
 ﻿<Window x:Class="WpfNotifierClient.IntervalReportWindow"
    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:system="clr-namespace:System;assembly=mscorlib"
-    xmlns:self="clr-namespace:WpfNotifierClient"
+    xmlns:persianToolKit="http://schemas.microsoft.com/wpf/2008/toolkit" FontFamily="Tahoma"
     Title="گزارش" Height="498" Width="440"  MinHeight="260" MinWidth="400">
 
     <Grid Margin="0,0,0,31" >
 
-        <DataGrid Name="DgTrxInfo" AutoGenerateColumns="False" Margin="10,64,10,10">
+        <DataGrid Name="DgTrxInfo" AutoGenerateColumns="False" Margin="10,39,10,10">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" />
                 <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" />
@@ -19,9 +18,208 @@
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <DataGrid HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <DatePicker Name="startTime" HorizontalAlignment="Left" Margin="307,31,0,0" VerticalAlignment="Top"/>
-        <DatePicker Name="endTime"  HorizontalAlignment="Left" Margin="200,31,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="showReport" Content="نمایش" HorizontalAlignment="Left" Margin="27,31,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1,0.409" Click="showReport_Click"/>
+        <persianToolKit:DatePicker Name="startTime" HorizontalAlignment="Left" Margin="304,10,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}">
+            <persianToolKit:DatePicker.Resources>
+                <Style x:Key="DatePickerStyle1" TargetType="{x:Type persianToolKit:DatePicker}">
+                    <Setter Property="Foreground" Value="#FF333333"/>
+                    <Setter Property="IsTodayHighlighted" Value="True"/>
+                    <Setter Property="SelectedDateFormat" Value="Short"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="BorderBrush">
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                <GradientStop Color="#FFA3AEB9" Offset="0"/>
+                                <GradientStop Color="#FF8399A9" Offset="0.375"/>
+                                <GradientStop Color="#FF718597" Offset="0.375"/>
+                                <GradientStop Color="#FF617584" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type persianToolKit:DatePicker}">
+                                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                    <Grid x:Name="PART_Root" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                        <Grid.Resources>
+                                            <SolidColorBrush x:Key="DisabledBrush" Color="#A5FFFFFF"/>
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="PART_Button" Grid.Column="1" Foreground="{TemplateBinding Foreground}" Focusable="False" HorizontalAlignment="Left" Margin="3,0" Grid.Row="0" VerticalAlignment="Top" Width="20">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Grid>
+                                                        <Grid Background="#11FFFFFF" FlowDirection="LeftToRight" HorizontalAlignment="Center" Height="18" Margin="0" VerticalAlignment="Center" Width="19">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="20*"/>
+                                                                <ColumnDefinition Width="20*"/>
+                                                                <ColumnDefinition Width="20*"/>
+                                                                <ColumnDefinition Width="20*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="23*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <Border x:Name="Highlight" BorderBrush="#FF45D6FA" BorderThickness="1" Grid.ColumnSpan="4" CornerRadius="0,0,1,1" Margin="-1" Opacity="0" Grid.Row="0" Grid.RowSpan="4"/>
+                                                            <Border x:Name="Background" BorderBrush="White" BorderThickness="1" Background="#FF1F3B53" Grid.ColumnSpan="4" CornerRadius="0.5" Margin="0,-1,0,0" Opacity="1" Grid.Row="1" Grid.RowSpan="3"/>
+                                                            <Border x:Name="BackgroundGradient" BorderBrush="#BF000000" BorderThickness="1" Grid.ColumnSpan="4" CornerRadius="0.5" Margin="0,-1,0,0" Opacity="1" Grid.Row="1" Grid.RowSpan="3">
+                                                                <Border.Background>
+                                                                    <LinearGradientBrush EndPoint="0.7,1" StartPoint="0.7,0">
+                                                                        <GradientStop Color="White" Offset="0"/>
+                                                                        <GradientStop Color="#F9FFFFFF" Offset="0.375"/>
+                                                                        <GradientStop Color="#E5FFFFFF" Offset="0.625"/>
+                                                                        <GradientStop Color="#C6FFFFFF" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Border.Background>
+                                                            </Border>
+                                                            <Rectangle Grid.ColumnSpan="4" Grid.RowSpan="1" StrokeThickness="1">
+                                                                <Rectangle.Fill>
+                                                                    <LinearGradientBrush EndPoint="0.3,-1.1" StartPoint="0.46,1.6">
+                                                                        <GradientStop Color="#FF4084BD"/>
+                                                                        <GradientStop Color="#FFAFCFEA" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Rectangle.Fill>
+                                                                <Rectangle.Stroke>
+                                                                    <LinearGradientBrush EndPoint="0.48,-1" StartPoint="0.48,1.25">
+                                                                        <GradientStop Color="#FF494949"/>
+                                                                        <GradientStop Color="#FF9F9F9F" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Rectangle.Stroke>
+                                                            </Rectangle>
+                                                            <Path Grid.ColumnSpan="4" Grid.Column="0" Data="M11.426758,8.4305077L11.749023,8.4305077 11.749023,16.331387 10.674805,16.331387 10.674805,10.299648 9.0742188,11.298672 9.0742188,10.294277C9.4788408,10.090176 9.9094238,9.8090878 10.365967,9.4510155 10.82251,9.0929432 11.176106,8.7527733 11.426758,8.4305077z M14.65086,8.4305077L18.566387,8.4305077 18.566387,9.3435936 15.671368,9.3435936 15.671368,11.255703C15.936341,11.058764 16.27293,10.960293 16.681133,10.960293 17.411602,10.960293 17.969301,11.178717 18.354229,11.615566 18.739157,12.052416 18.931622,12.673672 18.931622,13.479336 18.931622,15.452317 18.052553,16.438808 16.294415,16.438808 15.560365,16.438808 14.951641,16.234707 14.468243,15.826504L14.881817,14.929531C15.368796,15.326992 15.837872,15.525723 16.289043,15.525723 17.298809,15.525723 17.803692,14.895514 17.803692,13.635098 17.803692,12.460618 17.305971,11.873379 16.310528,11.873379 15.83071,11.873379 15.399232,12.079271 15.016094,12.491055L14.65086,12.238613z" Fill="#FF2F2F2F" HorizontalAlignment="Center" Margin="4,3" Grid.Row="1" Grid.RowSpan="3" RenderTransformOrigin="0.5,0.5" Stretch="Fill" VerticalAlignment="Center"/>
+                                                            <Ellipse Grid.ColumnSpan="4" Fill="White" HorizontalAlignment="Center" Height="3" StrokeThickness="0" VerticalAlignment="Center" Width="3"/>
+                                                            <Border x:Name="DisabledVisual" BorderBrush="#B2FFFFFF" BorderThickness="1" Grid.ColumnSpan="4" CornerRadius="0,0,0.5,0.5" Opacity="0" Grid.Row="0" Grid.RowSpan="4"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                        <persianToolKit:DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0" Foreground="{TemplateBinding Foreground}" Focusable="{TemplateBinding Focusable}" HorizontalContentAlignment="Stretch" Grid.Row="0" VerticalContentAlignment="Stretch" Text="شروع"/>
+                                        <Grid x:Name="PART_DisabledVisual" Grid.ColumnSpan="2" Grid.Column="0" IsHitTestVisible="False" Opacity="0" Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Rectangle Grid.Column="0" Fill="#A5FFFFFF" RadiusY="1" Grid.Row="0" RadiusX="1"/>
+                                            <Rectangle Grid.Column="1" Fill="#A5FFFFFF" Height="18" Margin="3,0" RadiusY="1" Grid.Row="0" RadiusX="1" Width="19"/>
+                                            <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" StaysOpen="False"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </persianToolKit:DatePicker.Resources>
+        </persianToolKit:DatePicker>
+        <persianToolKit:DatePicker Name="endTime"  HorizontalAlignment="Left" Margin="196,10,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}">
+            <persianToolKit:DatePicker.Resources>
+                <Style x:Key="DatePickerStyle1" TargetType="{x:Type persianToolKit:DatePicker}">
+                    <Setter Property="Foreground" Value="#FF333333"/>
+                    <Setter Property="IsTodayHighlighted" Value="True"/>
+                    <Setter Property="SelectedDateFormat" Value="Short"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="BorderBrush">
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                <GradientStop Color="#FFA3AEB9" Offset="0"/>
+                                <GradientStop Color="#FF8399A9" Offset="0.375"/>
+                                <GradientStop Color="#FF718597" Offset="0.375"/>
+                                <GradientStop Color="#FF617584" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type persianToolKit:DatePicker}">
+                                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                    <Grid x:Name="PART_Root" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                        <Grid.Resources>
+                                            <SolidColorBrush x:Key="DisabledBrush" Color="#A5FFFFFF"/>
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="PART_Button" Grid.Column="1" Foreground="{TemplateBinding Foreground}" Focusable="False" HorizontalAlignment="Left" Margin="3,0" Grid.Row="0" VerticalAlignment="Top" Width="20">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Grid>
+                                                        <Grid Background="#11FFFFFF" FlowDirection="LeftToRight" HorizontalAlignment="Center" Height="18" Margin="0" VerticalAlignment="Center" Width="19">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="20*"/>
+                                                                <ColumnDefinition Width="20*"/>
+                                                                <ColumnDefinition Width="20*"/>
+                                                                <ColumnDefinition Width="20*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="23*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <Border x:Name="Highlight" BorderBrush="#FF45D6FA" BorderThickness="1" Grid.ColumnSpan="4" CornerRadius="0,0,1,1" Margin="-1" Opacity="0" Grid.Row="0" Grid.RowSpan="4"/>
+                                                            <Border x:Name="Background" BorderBrush="White" BorderThickness="1" Background="#FF1F3B53" Grid.ColumnSpan="4" CornerRadius="0.5" Margin="0,-1,0,0" Opacity="1" Grid.Row="1" Grid.RowSpan="3"/>
+                                                            <Border x:Name="BackgroundGradient" BorderBrush="#BF000000" BorderThickness="1" Grid.ColumnSpan="4" CornerRadius="0.5" Margin="0,-1,0,0" Opacity="1" Grid.Row="1" Grid.RowSpan="3">
+                                                                <Border.Background>
+                                                                    <LinearGradientBrush EndPoint="0.7,1" StartPoint="0.7,0">
+                                                                        <GradientStop Color="White" Offset="0"/>
+                                                                        <GradientStop Color="#F9FFFFFF" Offset="0.375"/>
+                                                                        <GradientStop Color="#E5FFFFFF" Offset="0.625"/>
+                                                                        <GradientStop Color="#C6FFFFFF" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Border.Background>
+                                                            </Border>
+                                                            <Rectangle Grid.ColumnSpan="4" Grid.RowSpan="1" StrokeThickness="1">
+                                                                <Rectangle.Fill>
+                                                                    <LinearGradientBrush EndPoint="0.3,-1.1" StartPoint="0.46,1.6">
+                                                                        <GradientStop Color="#FF4084BD"/>
+                                                                        <GradientStop Color="#FFAFCFEA" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Rectangle.Fill>
+                                                                <Rectangle.Stroke>
+                                                                    <LinearGradientBrush EndPoint="0.48,-1" StartPoint="0.48,1.25">
+                                                                        <GradientStop Color="#FF494949"/>
+                                                                        <GradientStop Color="#FF9F9F9F" Offset="1"/>
+                                                                    </LinearGradientBrush>
+                                                                </Rectangle.Stroke>
+                                                            </Rectangle>
+                                                            <Path Grid.ColumnSpan="4" Grid.Column="0" Data="M11.426758,8.4305077L11.749023,8.4305077 11.749023,16.331387 10.674805,16.331387 10.674805,10.299648 9.0742188,11.298672 9.0742188,10.294277C9.4788408,10.090176 9.9094238,9.8090878 10.365967,9.4510155 10.82251,9.0929432 11.176106,8.7527733 11.426758,8.4305077z M14.65086,8.4305077L18.566387,8.4305077 18.566387,9.3435936 15.671368,9.3435936 15.671368,11.255703C15.936341,11.058764 16.27293,10.960293 16.681133,10.960293 17.411602,10.960293 17.969301,11.178717 18.354229,11.615566 18.739157,12.052416 18.931622,12.673672 18.931622,13.479336 18.931622,15.452317 18.052553,16.438808 16.294415,16.438808 15.560365,16.438808 14.951641,16.234707 14.468243,15.826504L14.881817,14.929531C15.368796,15.326992 15.837872,15.525723 16.289043,15.525723 17.298809,15.525723 17.803692,14.895514 17.803692,13.635098 17.803692,12.460618 17.305971,11.873379 16.310528,11.873379 15.83071,11.873379 15.399232,12.079271 15.016094,12.491055L14.65086,12.238613z" Fill="#FF2F2F2F" HorizontalAlignment="Center" Margin="4,3" Grid.Row="1" Grid.RowSpan="3" RenderTransformOrigin="0.5,0.5" Stretch="Fill" VerticalAlignment="Center"/>
+                                                            <Ellipse Grid.ColumnSpan="4" Fill="White" HorizontalAlignment="Center" Height="3" StrokeThickness="0" VerticalAlignment="Center" Width="3"/>
+                                                            <Border x:Name="DisabledVisual" BorderBrush="#B2FFFFFF" BorderThickness="1" Grid.ColumnSpan="4" CornerRadius="0,0,0.5,0.5" Opacity="0" Grid.Row="0" Grid.RowSpan="4"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                        <persianToolKit:DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0" Foreground="{TemplateBinding Foreground}" Focusable="{TemplateBinding Focusable}" HorizontalContentAlignment="Stretch" Grid.Row="0" VerticalContentAlignment="Stretch" Text="خاتمه"/>
+                                        <Grid x:Name="PART_DisabledVisual" Grid.ColumnSpan="2" Grid.Column="0" IsHitTestVisible="False" Opacity="0" Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Rectangle Grid.Column="0" Fill="#A5FFFFFF" RadiusY="1" Grid.Row="0" RadiusX="1"/>
+                                            <Rectangle Grid.Column="1" Fill="#A5FFFFFF" Height="18" Margin="3,0" RadiusY="1" Grid.Row="0" RadiusX="1" Width="19"/>
+                                            <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" StaysOpen="False"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </persianToolKit:DatePicker.Resources>
+        </persianToolKit:DatePicker>
+        <Button x:Name="showReport" Content="نمایش" HorizontalAlignment="Left" Margin="26,10,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1,0.409" Click="showReport_Click"/>
     </Grid>
 </Window>

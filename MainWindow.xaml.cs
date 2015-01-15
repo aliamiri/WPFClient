@@ -218,8 +218,9 @@ namespace WpfNotifierClient
 
         private void MenuItem_IntervalReport(object sender, RoutedEventArgs e)
         {
-            var window = new IntervalReportWindow();
-            window.Show();
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(1065);
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            new IntervalReportWindow().Show();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

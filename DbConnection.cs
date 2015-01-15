@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Windows;
 using System.Data.SQLite;
 using System.IO;
 using NLog;
@@ -14,7 +11,7 @@ namespace WpfNotifierClient
     {
         private static SQLiteConnection _connection;
 
-        Logger _logger = LogManager.GetCurrentClassLogger();
+        readonly Logger _logger = LogManager.GetCurrentClassLogger();
         
         public void CreateConnection()
         {
@@ -79,7 +76,8 @@ namespace WpfNotifierClient
             {
                 _logger.Trace("insert data : " +  info.Details);
                 _connection.Open();
-                var query = "INSERT INTO asanTrxInfo (TrxDate,CardNo,Amount) VALUES('" + info.TrxDate.ToDateTime() + "','" + info.CardNo + "'," + info.Amount + ")";
+                var date = info.TrxDate.ToDateTime().ToString("yyy-MM-dd HH:mm:ss");
+                var query = "INSERT INTO asanTrxInfo (TrxDate,CardNo,Amount) VALUES('" + date + "','" + info.CardNo + "'," + info.Amount + ")";
                 var command = _connection.CreateCommand();
                 command.CommandText = query;
                 command.ExecuteNonQuery();
@@ -99,18 +97,22 @@ namespace WpfNotifierClient
             try
             {
                 _connection.Open();
-                var query = "SELECT * FROM asanTrxInfo where TrxDate>'" + start.Date + "' and TrxDate<'" + end.Date + "';";
+                var startDate = start.ToString("yyy-MM-dd HH:mm:ss");
+                var endDate = end.ToString("yyy-MM-dd HH:mm:ss");
+                var query = "SELECT * FROM asanTrxInfo where TrxDate>'" + startDate + "' and TrxDate<'" + endDate + "';";
                 var command = _connection.CreateCommand();
                 command.CommandText = query;
                 var sqLiteDataReader = command.ExecuteReader();
 
-                List<TrxInfo> retList = new List<TrxInfo>();
+                var retList = new List<TrxInfo>();
                 while (sqLiteDataReader.Read())
                 {
-                    TrxInfo info = new TrxInfo();
-                    info.TrxDate = new PersianDateTime(Convert.ToDateTime(sqLiteDataReader.GetString(1)));
-                    info.CardNo = sqLiteDataReader.GetString(2);
-                    info.Amount = sqLiteDataReader.GetInt32(3);
+                    var info = new TrxInfo
+                    {
+                        TrxDate = new PersianDateTime(Convert.ToDateTime(sqLiteDataReader.GetString(1))),
+                        CardNo = sqLiteDataReader.GetString(2),
+                        Amount = sqLiteDataReader.GetInt32(3)
+                    };
                     retList.Add(info);
                 }
 

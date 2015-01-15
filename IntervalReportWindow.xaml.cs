@@ -21,17 +21,18 @@ namespace WpfNotifierClient
         public IntervalReportWindow()
         {
             InitializeComponent();
+            startTime.FlowDirection = FlowDirection.RightToLeft;
+            endTime.FlowDirection = FlowDirection.RightToLeft;
         }
 
         private void showReport_Click(object sender, RoutedEventArgs e)
         {
             var connection = new DbConnection();
 
-            DateTime? selectedDate = startTime.SelectedDate;
-            var pasTime = selectedDate.Value;
+            var start = startTime.SelectedDate != null ? startTime.SelectedDate.Value : DateTime.Now;
+            var end = endTime.SelectedDate != null ? endTime.SelectedDate.Value : DateTime.Now;
             DgTrxInfo.ItemsSource = null;
-            DgTrxInfo.ItemsSource = connection.SelectFromDb(pasTime, DateTime.Now);
-
+            DgTrxInfo.ItemsSource = connection.SelectFromDb(start, end);
         }
 
     }

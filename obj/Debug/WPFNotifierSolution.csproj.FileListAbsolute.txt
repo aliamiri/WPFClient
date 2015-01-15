@@ -42,3 +42,4 @@ D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\NLog.dll
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\NLog.xml
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\IntervalReportWindow.baml
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\IntervalReportWindow.g.cs
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\WPFToolkit.dll
