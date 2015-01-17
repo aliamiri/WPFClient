@@ -30,7 +30,7 @@ namespace WpfNotifierClient
             var connection = new DbConnection();
 
             var start = startTime.SelectedDate != null ? startTime.SelectedDate.Value : DateTime.Now;
-            var end = endTime.SelectedDate != null ? endTime.SelectedDate.Value : DateTime.Now;
+            var end = endTime.SelectedDate != null ? endTime.SelectedDate.Value : DateTime.Now.AddDays(1);
             DgTrxInfo.ItemsSource = null;
             DgTrxInfo.ItemsSource = connection.SelectFromDb(start, end);
         }

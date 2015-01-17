@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="AsanPardakhtNotifier.exe" version="1.0.0.15" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="AsanPardakhtNotifier.exe" version="1.0.0.17" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
     <assemblyIdentity name="AsanPardakhtNotifier" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
@@ -49,7 +49,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>8uk/Or2fkP+y+zfEx8NH+6QOyBs=</dsig:DigestValue>
+        <dsig:DigestValue>nqGJamr1gaL662iUWw6DK5kz4x0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -194,13 +194,13 @@
       <dsig:DigestValue>akgASOHNpnu8lAkXr8BWFDY+EXs=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="NLog.config" size="799">
+  <file name="NLog.config" size="1289">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>bLFKnZuYgUP9PYiwRpKJvSAq3B4=</dsig:DigestValue>
+      <dsig:DigestValue>8l0YK7L4TrOJRdts5Py8MzYej6A=</dsig:DigestValue>
     </hash>
   </file>
   <file name="x64\SQLite.Interop.dll" size="1148416">

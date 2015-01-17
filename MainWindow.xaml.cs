@@ -48,6 +48,7 @@ namespace WpfNotifierClient
         private readonly DbConnection _connection;
         readonly TcpClient _tcpClient = new TcpClient();
         private string _bufferStrings = "";
+        private bool _connectionFlag = false;
 
         public MainWindow()
         {
@@ -59,6 +60,7 @@ namespace WpfNotifierClient
                 InitializeComponent();
                 _connection = new DbConnection();
                 _connection.CreateConnection();
+                ReconnectButton.Visibility = Visibility.Hidden;
             }
             catch (Exception exc)
             {
@@ -70,7 +72,6 @@ namespace WpfNotifierClient
 
            // CheckFistTime();
 
-           StartTcp();
 
         }
 
@@ -181,6 +182,7 @@ namespace WpfNotifierClient
             }
             catch (SocketException ex)
             {
+                _connectionFlag = false;
                 _logger.Error("TCP Connection failed with this error : " +  ex.Message);
                 MessageBox.Show("امکان ارتباط با سرور برقرار نمیباشد. اتصال شبکه خود را چک کنید.");
                 MessageBox.Show("از برنامه در حالت آفلاین استفاده خواهید کرد");
@@ -199,6 +201,11 @@ namespace WpfNotifierClient
             if (txtPassword.Password.Equals("salaam"))
             {
                 LoginLayer.Visibility = Visibility.Collapsed;
+                if (!_connectionFlag)
+                {
+                    _connectionFlag = true;
+                    StartTcp();
+                }
             }
             else
             {

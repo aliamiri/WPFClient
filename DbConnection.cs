@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Security.Cryptography;
 using NLog;
 
 
@@ -32,7 +33,13 @@ namespace WpfNotifierClient
 
                 var destFilePath = Path.Combine(userFilePath, "persianSwitch.db");
 
-                _connection = new SQLiteConnection("data source=" + destFilePath);
+                if (!File.Exists(destFilePath))
+                {
+                    _connection = new SQLiteConnection("data source=" + destFilePath + ";Version=3");
+                    _connection.SetPassword("weAreThe733WeTheChampions");
+                    _connection.Close();
+                }
+                _connection = new SQLiteConnection("data source=" + destFilePath + ";Version=3;Password=weAreThe733WeTheChampions");
 
                 CheckDbExistance();
             }

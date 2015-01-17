@@ -1,0 +1,9 @@
+2015-01-17 10:52:57.0828 WpfNotifierClient.MainWindow an exception occured : Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host.
+2015-01-17 10:55:09.5098 WpfNotifierClient.MainWindow Program starts
+2015-01-17 10:55:09.5588 WpfNotifierClient.MainWindow Initilization
+2015-01-17 10:55:09.6288 WpfNotifierClient.DbConnection start to create a connection
+2015-01-17 10:55:09.6368 WpfNotifierClient.DbConnection get address of AppData folder
+2015-01-17 10:55:09.6368 WpfNotifierClient.DbConnection create a directory with our name in AppData folder
+2015-01-17 10:55:09.7938 WpfNotifierClient.DbConnection check if out database exist or not
+2015-01-17 10:55:13.7038 WpfNotifierClient.MainWindow before connecting to TCP with address : 192.168.10.38 on port : 2001
+2015-01-17 10:55:14.7038 WpfNotifierClient.MainWindow TCP Connection failed with this error : No connection could be made because the target machine actively refused it 192.168.10.38:2001
