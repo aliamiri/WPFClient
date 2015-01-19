@@ -49,10 +49,10 @@ namespace WpfNotifierClient
         readonly TcpClient _tcpClient = new TcpClient();
         private string _bufferStrings = "";
         private bool _connectionFlag = false;
+        private int _accessLevel = 0;
 
         public MainWindow()
         {
-
             _logger.Info("Program starts");          
             try
             {
@@ -108,20 +108,16 @@ namespace WpfNotifierClient
         private void CheckFistTime()
         {
             var appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            if (appPath != null)
-            {
-                var configFile = Path.Combine(appPath, "App.config");
-                var isFirstTime = ConfigurationManager.AppSettings["isFirstTime"];
-                if (isFirstTime.Equals("true"))
-                {
-                    var configFileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
-                    Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
-                    config.AppSettings.Settings["isFirstTime"].Value = "false";
-                    config.Save(ConfigurationSaveMode.Full);    
-                    //TODO configuration for database
-                    //TODO show a window to set merchant name and this type of ...
-                }
-            }
+            if (appPath == null) return;
+            var configFile = Path.Combine(appPath, "App.config");
+            var isFirstTime = ConfigurationManager.AppSettings["isFirstTime"];
+            if (!isFirstTime.Equals("true")) return;
+            var configFileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
+            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+            config.AppSettings.Settings["isFirstTime"].Value = "false";
+            config.Save(ConfigurationSaveMode.Full);    
+            //TODO configuration for database
+            //TODO show a window to set merchant name and this type of ...
         }
 
         public async void AsyncFill()
@@ -129,35 +125,37 @@ namespace WpfNotifierClient
             try
             {
                 _logger.Trace("start of AsyncFill, keep track of index to just show 10 last results");
-                _index++;
-                if (_index > 10)
+                while (_connectionFlag)
                 {
-                    _trxInfos.RemoveAt(0);
-                    _index--;
+                    _index++;
+                    if (_index > 10)
+                    {
+                        _trxInfos.RemoveAt(0);
+                        _index--;
+                    }
+
+                    var slowTask = Task<string>.Factory.StartNew(ReadAsync);
+
+                    _logger.Trace("start reading from tcp with async function");
+                    await slowTask;
+
+
+                    var retVal = slowTask.Result;
+                    _logger.Trace("the return value of async function is : " + retVal);
+
+                    var info = InputParser(retVal);
+
+                    if (info != null)
+                    {
+                        _logger.Trace("show the result to user");
+                        _trxInfos.Add(info);
+                        DgTrxInfo.ItemsSource = null;
+                        DgTrxInfo.ItemsSource = _trxInfos;
+                        _taskbarNotifier.Show("خرید جدید", info.Details, 500, 1000, 500);
+                        _connection.InsertTrxInDb(info);
+                    }
+                    _logger.Trace("call me again and again till the end of the time :D");
                 }
-
-                var slowTask = Task<string>.Factory.StartNew(ReadAsync);
-
-                _logger.Trace("start reading from tcp with async function");
-                await slowTask;
-
-
-                var retVal = slowTask.Result;
-                _logger.Trace("the return value of async function is : " + retVal);
-
-                var info = InputParser(retVal);
-
-                if (info != null)
-                {
-                    _logger.Trace("show the result to user");
-                    _trxInfos.Add(info);
-                    DgTrxInfo.ItemsSource = null;
-                    DgTrxInfo.ItemsSource = _trxInfos;
-                    _taskbarNotifier.Show("خرید جدید", info.Details, 500, 1000, 500);
-                    _connection.InsertInDb(info);
-                }
-                _logger.Trace("call me again and again till the end of the time :D");
-                AsyncFill();
             }
             catch (Exception exception)
             {
@@ -172,7 +170,8 @@ namespace WpfNotifierClient
             _logger.Info("before connecting to TCP with address : " + serverIp + " on port : " + serverPort);
             try
             {
-                _tcpClient.Connect(serverIp, serverPort);
+                if(!_tcpClient.Connected)
+                    _tcpClient.Connect(serverIp, serverPort);
                 _logger.Info("successfully connected to TCP, start reading data");
                 AsyncFill();
 //                var dispatcher = Application.Current.MainWindow.Dispatcher;
@@ -189,21 +188,25 @@ namespace WpfNotifierClient
                 ReconnectButton.Visibility = Visibility.Visible;
             }
         }
-
+        
         private void Reconnect_Click(object sender, RoutedEventArgs e)
         {
             ReconnectButton.Visibility = Visibility.Hidden;
+            _connectionFlag = true;
             StartTcp();
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            if (txtPassword.Password.Equals("salaam"))
+            var accessLevel = LoginCheck(txtName.Text,txtPassword.Password);
+            if (accessLevel > -1)
             {
+                //_connection.UpdateLastLogin(txtName.Text);
                 LoginLayer.Visibility = Visibility.Collapsed;
                 if (!_connectionFlag)
                 {
                     _connectionFlag = true;
+                    _accessLevel = accessLevel;
                     StartTcp();
                 }
             }
@@ -214,6 +217,14 @@ namespace WpfNotifierClient
                 InfoTextBlock.Text = "خطا! دوباره وارد کنید";
                 loginForm.Background = Brushes.Crimson;
             }
+        }
+
+        private int LoginCheck(string username, string password)
+        {
+            if (password.Equals("salaam"))
+                return 5;
+            var user = _connection.SelectUserFromDb(username);
+            return user != null? user.Password.Equals(password)  ? user.AccessLevel : -1 :-1;
         }
 
         private void MenuItem_lock(object sender, RoutedEventArgs e)
@@ -228,6 +239,19 @@ namespace WpfNotifierClient
             Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(1065);
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
             new IntervalReportWindow().Show();
+        }
+
+        private void MenuItem_signOut(object sender, RoutedEventArgs e)
+        {
+            _connectionFlag = false;
+            txtPassword.Password = "";
+            txtName.Text = "";
+            LoginLayer.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_createNewUser(object sender, RoutedEventArgs e)
+        {
+            new CreateUser().Show();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

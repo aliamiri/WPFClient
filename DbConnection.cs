@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Security.Cryptography;
 using NLog;
 
 
@@ -74,10 +73,29 @@ namespace WpfNotifierClient
             {
                 sqliteDatareader.Close();
             }
+
+            sqliteCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='asanLocalUsers';";
+
+            sqliteDatareader = sqliteCmd.ExecuteReader();
+
+            _logger.Info("check if out database exist or not");
+            if (!sqliteDatareader.HasRows)
+            {
+                _logger.Info("if it is a first time create our database");
+                sqliteDatareader.Close();
+                sqliteCmd.CommandText =
+                    "CREATE TABLE asanLocalUsers(id integer primary key, username varchar(20) not null unique,password varchar(20),accessLevel integer,lastLogin DateTime);";
+                sqliteCmd.ExecuteNonQuery();
+            }
+
+            if (!sqliteDatareader.IsClosed)
+            {
+                sqliteDatareader.Close();
+            }
             _connection.Close();
         }
 
-        public void InsertInDb(TrxInfo info)
+        public void InsertTrxInDb(TrxInfo info)
         {
             try
             {
@@ -99,7 +117,28 @@ namespace WpfNotifierClient
             }
         }
 
-        public List<TrxInfo> SelectFromDb(DateTime start, DateTime end)
+        public void InsertUserInDb(User user)
+        {
+            try
+            {
+                _logger.Trace("insert user : " + user.UserName);
+                _connection.Open();
+                var query = "INSERT INTO asanLocalUsers (username,password,accessLevel) VALUES('" + user.UserName + "','" + user.Password + "'," + user.AccessLevel+ ")";
+                var command = _connection.CreateCommand();
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("an exception occured : " + e.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public List<TrxInfo> SelectTrxFromDb(DateTime start, DateTime end)
         {
             try
             {
@@ -129,6 +168,61 @@ namespace WpfNotifierClient
             {
                 _logger.Error("an exception occured : " + e.Message);
                 return null;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public User SelectUserFromDb(string userName)
+        {
+            try
+            {
+                _connection.Open();
+                var query = "SELECT * FROM asanLocalUsers where username='" + userName+ "';";
+                var command = _connection.CreateCommand();
+                command.CommandText = query;
+                var sqLiteDataReader = command.ExecuteReader();
+
+                while (sqLiteDataReader.Read())
+                {
+                    var user = new User
+                    {
+                        UserName = sqLiteDataReader.GetString(1),
+                        Password = sqLiteDataReader.GetString(2),
+                        AccessLevel = sqLiteDataReader.GetInt32(3)
+                    };
+                    return user;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.Error("an exception occured : " + e.Message);
+                return null;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public void UpdateLastLogin(string username)
+        {
+            try
+            {
+                _logger.Trace("update user login date : " + username);
+                _connection.Open();
+                var loginDate = DateTime.Now.ToString("yyy-MM-dd HH:mm:ss");
+                var query = "UPDATE asanLocalUsers Set lastLogin = '" + loginDate+"' where username = '"+username+"';";
+                var command = _connection.CreateCommand();
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("an exception occured : " + e.Message);
             }
             finally
             {

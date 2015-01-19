@@ -13,8 +13,8 @@
                 </MenuItem>
                 <MenuItem Header="مدیریت">
                     <MenuItem Header="قفل" Click="MenuItem_lock"/>
-                    <MenuItem Header="خروج" />
-                    <MenuItem Header="تعریف کاربر غیر مدیر" />
+                    <MenuItem Header="خروج" Click="MenuItem_signOut"/>
+                    <MenuItem Header="تعریف کاربر" Click="MenuItem_createNewUser"/>
                 </MenuItem>
             </Menu>
             <DataGrid Name="DgTrxInfo" AutoGenerateColumns="False" Margin="10,22,10,10">
