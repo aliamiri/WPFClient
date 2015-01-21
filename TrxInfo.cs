@@ -23,7 +23,7 @@ namespace WpfNotifierClient
         {
             get
             {
-                return String.Format("در ساعت {0} مبلغ {1} ریال با کارت به شماره {2} خریداری شد.", TrxDate.TimeOfDay.ToHHMMSS(), Amount , CardNo);
+                return String.Format("در ساعت {0} در تاریخ {1} مبلغ {2} ریال \n با کارت به شماره {3} خریداری شد.", TrxDate.TimeOfDay.ToHHMMSS(), TrxDate , Amount, CardNo);
             }
         }
     }

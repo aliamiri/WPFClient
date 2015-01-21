@@ -2,15 +2,16 @@
    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:persianToolKit="http://schemas.microsoft.com/wpf/2008/toolkit" FontFamily="Tahoma"
-    Title="گزارش" Height="498" Width="440"  MinHeight="260" MinWidth="400">
+    Title="گزارش بازه" Height="498" Width="458"  MinHeight="260" MinWidth="400">
 
     <Grid Margin="0,0,0,31" >
-
-        <DataGrid Name="DgTrxInfo" AutoGenerateColumns="False" Margin="10,39,10,10">
+        <Menu Margin="0,0,-9,-55" Grid.ColumnSpan="3">
+        </Menu>
+        <DataGrid IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="10,49,1,0">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" />
-                <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" />
-                <DataGridTextColumn Header="مبلغ" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" Width="140" />
+                <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" Width="140"/>
+                <DataGridTextColumn Header="مبلغ" Binding="{Binding Amount}" Width="140"/>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
@@ -18,7 +19,7 @@
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <persianToolKit:DatePicker Name="startTime" HorizontalAlignment="Left" Margin="304,10,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}">
+        <persianToolKit:DatePicker Name="startTime" HorizontalAlignment="Left" Margin="332,17,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}" Height="24" Width="108">
             <persianToolKit:DatePicker.Resources>
                 <Style x:Key="DatePickerStyle1" TargetType="{x:Type persianToolKit:DatePicker}">
                     <Setter Property="Foreground" Value="#FF333333"/>
@@ -119,7 +120,7 @@
                 </Style>
             </persianToolKit:DatePicker.Resources>
         </persianToolKit:DatePicker>
-        <persianToolKit:DatePicker Name="endTime"  HorizontalAlignment="Left" Margin="196,10,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}">
+        <persianToolKit:DatePicker Name="endTime"  HorizontalAlignment="Left" Margin="211,17,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}" Height="24" Width="116">
             <persianToolKit:DatePicker.Resources>
                 <Style x:Key="DatePickerStyle1" TargetType="{x:Type persianToolKit:DatePicker}">
                     <Setter Property="Foreground" Value="#FF333333"/>
@@ -220,6 +221,6 @@
                 </Style>
             </persianToolKit:DatePicker.Resources>
         </persianToolKit:DatePicker>
-        <Button x:Name="showReport" Content="نمایش" HorizontalAlignment="Left" Margin="26,10,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1,0.409" Click="showReport_Click"/>
+        <Button x:Name="showReport" Content="نمایش" HorizontalAlignment="Left" Margin="41,17,0,0" VerticalAlignment="Top" Width="78" RenderTransformOrigin="1,0.409" Click="showReport_Click" Height="24"/>
     </Grid>
 </Window>

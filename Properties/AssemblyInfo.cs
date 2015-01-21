@@ -7,13 +7,13 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WpfApplication2")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("AsanNotifier")]
+[assembly: AssemblyDescription("A application to notify merchant about the payments")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Persian Switch")]
-[assembly: AssemblyProduct("WpfApplication2")]
+[assembly: AssemblyProduct("AsanNotifier")]
 [assembly: AssemblyCopyright("Copyright © Persian Switch 2015")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("@AP")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

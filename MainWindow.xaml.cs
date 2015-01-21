@@ -215,7 +215,6 @@ namespace WpfNotifierClient
                 txtPassword.Password = "";
                 txtName.Text = "";
                 InfoTextBlock.Text = "خطا! دوباره وارد کنید";
-                loginForm.Background = Brushes.Crimson;
             }
         }
 

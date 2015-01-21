@@ -45,3 +45,5 @@ D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\IntervalRe
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\WPFToolkit.dll
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\CreateUser.baml
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\CreateUser.g.cs
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\Resources\style.baml
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\App.baml
