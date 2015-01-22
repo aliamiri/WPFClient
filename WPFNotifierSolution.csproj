@@ -70,7 +70,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Images\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
@@ -143,35 +143,42 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CreateUser.xaml.cs">
+    <Compile Include="UIPages\CreateUser.xaml.cs">
       <DependentUpon>CreateUser.xaml</DependentUpon>
     </Compile>
     <Compile Include="DbConnection.cs" />
-    <Compile Include="IntervalReportWindow.xaml.cs">
+    <Compile Include="UIPages\IntervalReportWindow.xaml.cs">
       <DependentUpon>IntervalReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIPages\LoginForm.xaml.cs">
+      <DependentUpon>LoginForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TaskbarNotifier.cs">
+    <Compile Include="UIPages\TaskbarNotifier.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TaskbarNotifier.Designer.cs">
+    <Compile Include="UIPages\TaskbarNotifier.Designer.cs">
       <DependentUpon>TaskbarNotifier.cs</DependentUpon>
     </Compile>
-    <Compile Include="TrxInfo.cs" />
-    <Compile Include="User.cs" />
-    <Page Include="CreateUser.xaml">
+    <Compile Include="Domains\TrxInfo.cs" />
+    <Compile Include="Domains\User.cs" />
+    <Page Include="UIPages\CreateUser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="IntervalReportWindow.xaml">
+    <Page Include="UIPages\IntervalReportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="UIPages\LoginForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIPages\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -179,7 +186,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="UIPages\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -201,7 +208,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="icon.ico" />
+    <Resource Include="Resources\Images\icon.ico" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -220,10 +227,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="close.bmp" />
+    <EmbeddedResource Include="Resources\Images\close.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="skin4.bmp" />
+    <EmbeddedResource Include="Resources\Images\skin4.bmp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -244,8 +251,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="logo.jpg" />
-    <EmbeddedResource Include="logo.bmp" />
+    <EmbeddedResource Include="Resources\Images\logo.bmp" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

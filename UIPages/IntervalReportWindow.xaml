@@ -5,9 +5,8 @@
     Title="گزارش بازه" Height="498" Width="458"  MinHeight="260" MinWidth="400">
 
     <Grid Margin="0,0,0,31" >
-        <Menu Margin="0,0,-9,-55" Grid.ColumnSpan="3">
-        </Menu>
-        <DataGrid IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="10,49,1,0">
+        <Menu Margin="0,0,-9,-36"/>
+        <DataGrid IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="5,49,6,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" Width="140" />
                 <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" Width="140"/>
@@ -120,7 +119,7 @@
                 </Style>
             </persianToolKit:DatePicker.Resources>
         </persianToolKit:DatePicker>
-        <persianToolKit:DatePicker Name="endTime"  HorizontalAlignment="Left" Margin="211,17,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}" Height="24" Width="116">
+        <persianToolKit:DatePicker Name="endTime"  HorizontalAlignment="Left" Margin="202,17,0,0" VerticalAlignment="Top" Style="{DynamicResource DatePickerStyle1}" Height="24" Width="116">
             <persianToolKit:DatePicker.Resources>
                 <Style x:Key="DatePickerStyle1" TargetType="{x:Type persianToolKit:DatePicker}">
                     <Setter Property="Foreground" Value="#FF333333"/>
@@ -221,6 +220,6 @@
                 </Style>
             </persianToolKit:DatePicker.Resources>
         </persianToolKit:DatePicker>
-        <Button x:Name="showReport" Content="نمایش" HorizontalAlignment="Left" Margin="41,17,0,0" VerticalAlignment="Top" Width="78" RenderTransformOrigin="1,0.409" Click="showReport_Click" Height="24"/>
+        <Button x:Name="showReport" Content="نمایش" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="78" RenderTransformOrigin="1,0.409" Click="showReport_Click" Height="24"/>
     </Grid>
 </Window>

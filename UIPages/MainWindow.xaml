@@ -1,23 +1,21 @@
 ﻿<Window x:Class="WpfNotifierClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wpfNotifierClient="clr-namespace:WpfNotifierClient"
-        Title="سیستم اطلاع رسانی پایانه آسان پرداخت" Height="357" Width="446">
+        Title="سیستم اطلاع رسانی پایانه آسان پرداخت" Height="437" Width="449">
 
-    <Grid Margin="0,0,2,52">
-        <Grid>
-            <Menu Margin="0,0,-9,-55">
-                <MenuItem Header="گزارشات" Margin="0,1,0,296">
+    <Grid >
+            <Menu>
+                <MenuItem Header="گزارشات" Margin="0,1,0,376">
                     <MenuItem Header="گزارش بازه ای" Click="MenuItem_IntervalReport"/>
                     <MenuItem Header="گزارش" />
                 </MenuItem>
-                <MenuItem Header="مدیریت" Margin="0,1,0,296">
+                <MenuItem Header="مدیریت" Margin="0,1,0,376">
                     <MenuItem Header="قفل" Click="MenuItem_lock"/>
                     <MenuItem Header="خروج" Click="MenuItem_signOut"/>
                     <MenuItem Header="تعریف کاربر" Click="MenuItem_createNewUser"/>
                 </MenuItem>
             </Menu>
-            <DataGrid IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="6,32,0,27" Width="430">
+            <DataGrid IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="6,32,5,62" Width="430">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" Width="140" />
                     <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" Width="140"/>
@@ -29,16 +27,15 @@
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
-            <Button Click="Reconnect_Click" Content="ارتباط مجدد"  Name="ReconnectButton" Margin="0,267,0,-41" />
-        </Grid>
+            <Button Click="Reconnect_Click" Content="ارتباط مجدد"  Name="ReconnectButton" Margin="6,350,6,10" />
 
-        <Grid x:Name="LoginLayer" Background="DarkCyan" Margin="0,0,-9,-54">
+        <!--<Grid x:Name="LoginLayer" Background="DarkCyan" Margin="0,0,-9,-54">
             <TextBlock TextAlignment="Center" Text="اطلاعات را وارد کنید" Name="InfoTextBlock" FontWeight="Bold" HorizontalAlignment="Center" Height="60" FontSize="20" Width="296" Margin="76,10,73,259"/>
             <TextBlock Text="نام کاربری" Margin="272,83,100,216" />
             <TextBox x:Name="txtName" Width="100" Margin="90,83,255,216"/>
             <TextBlock Text="رمز عبور" Margin="276,126,115,174" />
             <PasswordBox x:Name="txtPassword" Width="100"  Margin="90,126,255,174"/>
             <Button HorizontalAlignment="Center"  Click="Login_Click" Content="ورود" RenderTransformOrigin="0.052,0.564" Width="137" Margin="141,176,167,116"/>
-        </Grid>
+        </Grid>-->
     </Grid>
 </Window>

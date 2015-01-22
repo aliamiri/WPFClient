@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using WpfNotifierClient.Properties;
 
 namespace WpfNotifierClient
 {
@@ -35,11 +36,11 @@ namespace WpfNotifierClient
         protected int nIncrementHide;
         protected bool bIsMouseOverPopup = false;
         protected bool bIsMouseOverClose = false;
-        protected bool bIsMouseOverContent = false;
-        protected bool bIsMouseOverTitle = false;
-        protected bool bIsMouseDown = false;
-        protected bool bKeepVisibleOnMouseOver = true;			
-        protected bool bReShowOnMouseOver = false;				
+        protected bool BIsMouseOverContent = false;
+        protected bool BIsMouseOverTitle = false;
+        protected bool BIsMouseDown = false;
+        protected bool BKeepVisibleOnMouseOver = true;			
+        protected bool BReShowOnMouseOver = false;				
         #endregion
 
         #region TaskbarNotifier Public Members
@@ -87,12 +88,12 @@ namespace WpfNotifierClient
 
             timer.Enabled = true;
             timer.Tick += new EventHandler(OnTimer);
-
+            
             var type = GetType();
-            var bitmap = new Bitmap(type, "logo.bmp");
+            //var bitmap = ;//new Bitmap(type, "bitmap path");
             var transparencyColor = Color.FromArgb(255, 0, 255);
-            SetBackgroundBitmap(bitmap, transparencyColor);
-            SetCloseBitmap(new Bitmap(type, "close.bmp"), transparencyColor, new Point(240, 8));
+            SetBackgroundBitmap(Resources.logo, transparencyColor);
+            SetCloseBitmap(Resources.close, transparencyColor, new Point(240, 8));
             TitleRectangle = new Rectangle(140, 9, 240, 25);
             ContentRectangle = new Rectangle(8, 41, 240, 68);
             CloseClickable = true;
@@ -284,11 +285,11 @@ namespace WpfNotifierClient
         {
             get
             {
-                return bKeepVisibleOnMouseOver;
+                return BKeepVisibleOnMouseOver;
             }
             set
             {
-                bKeepVisibleOnMouseOver = value;
+                BKeepVisibleOnMouseOver = value;
             }
         }
 
@@ -300,11 +301,11 @@ namespace WpfNotifierClient
         {
             get
             {
-                return bReShowOnMouseOver;
+                return BReShowOnMouseOver;
             }
             set
             {
-                bReShowOnMouseOver = value;
+                BReShowOnMouseOver = value;
             }
         }
 
@@ -473,7 +474,7 @@ namespace WpfNotifierClient
 
                 if (bIsMouseOverClose)
                 {
-                    if (bIsMouseDown)
+                    if (BIsMouseDown)
                         rectSrc = new Rectangle(new Point(CloseBitmapSize.Width * 2, 0), CloseBitmapSize);
                     else
                         rectSrc = new Rectangle(new Point(CloseBitmapSize.Width, 0), CloseBitmapSize);
@@ -495,7 +496,7 @@ namespace WpfNotifierClient
                 sf.LineAlignment = StringAlignment.Center;
                 sf.FormatFlags = StringFormatFlags.NoWrap;
                 sf.Trimming = StringTrimming.EllipsisCharacter;				// Added Rev 002
-                if (bIsMouseOverTitle)
+                if (BIsMouseOverTitle)
                     grfx.DrawString(titleText, hoverTitleFont, new SolidBrush(hoverTitleColor), TitleRectangle, sf);
                 else
                     grfx.DrawString(titleText, normalTitleFont, new SolidBrush(normalTitleColor), TitleRectangle, sf);
@@ -509,7 +510,7 @@ namespace WpfNotifierClient
                 sf.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
                 sf.Trimming = StringTrimming.Word;							// Added Rev 002
 
-                if (bIsMouseOverContent)
+                if (BIsMouseOverContent)
                 {
                     grfx.DrawString(contentText, hoverContentFont, new SolidBrush(hoverContentColor), ContentRectangle, sf);
                     if (EnableSelectionRectangle)
@@ -609,7 +610,7 @@ namespace WpfNotifierClient
                     timer.Stop();
                     timer.Interval = nHideEvents;
                     // Added Rev 002
-                    if ((bKeepVisibleOnMouseOver && !bIsMouseOverPopup) || (!bKeepVisibleOnMouseOver))
+                    if ((BKeepVisibleOnMouseOver && !bIsMouseOverPopup) || (!BKeepVisibleOnMouseOver))
                     {
                         taskbarState = TaskbarStates.disappearing;
                     }
@@ -619,7 +620,7 @@ namespace WpfNotifierClient
 
                 case TaskbarStates.disappearing:
                     // Added Rev 002
-                    if (bReShowOnMouseOver && bIsMouseOverPopup)
+                    if (BReShowOnMouseOver && bIsMouseOverPopup)
                     {
                         taskbarState = TaskbarStates.appearing;
                     }
@@ -647,8 +648,8 @@ namespace WpfNotifierClient
             base.OnMouseLeave(ea);
             bIsMouseOverPopup = false;
             bIsMouseOverClose = false;
-            bIsMouseOverTitle = false;
-            bIsMouseOverContent = false;
+            BIsMouseOverTitle = false;
+            BIsMouseOverContent = false;
             Refresh();
         }
 
@@ -663,42 +664,42 @@ namespace WpfNotifierClient
                 if (!bIsMouseOverClose)
                 {
                     bIsMouseOverClose = true;
-                    bIsMouseOverTitle = false;
-                    bIsMouseOverContent = false;
+                    BIsMouseOverTitle = false;
+                    BIsMouseOverContent = false;
                     Cursor = Cursors.Hand;
                     bContentModified = true;
                 }
             }
             else if (RealContentRectangle.Contains(new Point(mea.X, mea.Y)) && ContentClickable)
             {
-                if (!bIsMouseOverContent)
+                if (!BIsMouseOverContent)
                 {
                     bIsMouseOverClose = false;
-                    bIsMouseOverTitle = false;
-                    bIsMouseOverContent = true;
+                    BIsMouseOverTitle = false;
+                    BIsMouseOverContent = true;
                     Cursor = Cursors.Hand;
                     bContentModified = true;
                 }
             }
             else if (RealTitleRectangle.Contains(new Point(mea.X, mea.Y)) && TitleClickable)
             {
-                if (!bIsMouseOverTitle)
+                if (!BIsMouseOverTitle)
                 {
                     bIsMouseOverClose = false;
-                    bIsMouseOverTitle = true;
-                    bIsMouseOverContent = false;
+                    BIsMouseOverTitle = true;
+                    BIsMouseOverContent = false;
                     Cursor = Cursors.Hand;
                     bContentModified = true;
                 }
             }
             else
             {
-                if (bIsMouseOverClose || bIsMouseOverTitle || bIsMouseOverContent)
+                if (bIsMouseOverClose || BIsMouseOverTitle || BIsMouseOverContent)
                     bContentModified = true;
 
                 bIsMouseOverClose = false;
-                bIsMouseOverTitle = false;
-                bIsMouseOverContent = false;
+                BIsMouseOverTitle = false;
+                BIsMouseOverContent = false;
                 Cursor = Cursors.Default;
             }
 
@@ -709,7 +710,7 @@ namespace WpfNotifierClient
         protected override void OnMouseDown(MouseEventArgs mea)
         {
             base.OnMouseDown(mea);
-            bIsMouseDown = true;
+            BIsMouseDown = true;
 
             if (bIsMouseOverClose)
                 Refresh();
@@ -718,7 +719,7 @@ namespace WpfNotifierClient
         protected override void OnMouseUp(MouseEventArgs mea)
         {
             base.OnMouseUp(mea);
-            bIsMouseDown = false;
+            BIsMouseDown = false;
 
             if (bIsMouseOverClose)
             {
@@ -727,12 +728,12 @@ namespace WpfNotifierClient
                 if (CloseClick != null)
                     CloseClick(this, new EventArgs());
             }
-            else if (bIsMouseOverTitle)
+            else if (BIsMouseOverTitle)
             {
                 if (TitleClick != null)
                     TitleClick(this, new EventArgs());
             }
-            else if (bIsMouseOverContent)
+            else if (BIsMouseOverContent)
             {
                 if (ContentClick != null)
                     ContentClick(this, new EventArgs());

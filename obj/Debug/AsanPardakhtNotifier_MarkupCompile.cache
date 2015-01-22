@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\App.xaml
-4-1100891322
+5164689252
 3-2079655027
-12-1898236085
+13-1214562431
 30416894750
-CreateUser.xaml;IntervalReportWindow.xaml;MainWindow.xaml;Resources\style.xaml;
+UIPages\CreateUser.xaml;UIPages\IntervalReportWindow.xaml;UIPages\LoginForm.xaml;UIPages\MainWindow.xaml;Resources\style.xaml;
 
 False
 

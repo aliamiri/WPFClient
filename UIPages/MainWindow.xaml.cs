@@ -48,19 +48,26 @@ namespace WpfNotifierClient
         private readonly DbConnection _connection;
         readonly TcpClient _tcpClient = new TcpClient();
         private string _bufferStrings = "";
-        private bool _connectionFlag = false;
-        private int _accessLevel = 0;
+        public static bool ConnectionFlag = false;
+        public static int AccessLevel = 0;
 
         public MainWindow()
         {
             _logger.Info("Program starts");          
             try
             {
+                
                 _logger.Info("Initilization");
-                InitializeComponent();
+        
                 _connection = new DbConnection();
                 _connection.CreateConnection();
+                
+                new LoginForm().ShowDialog();
+                if(AccessLevel == -1)
+                    Close();
+                InitializeComponent();
                 ReconnectButton.Visibility = Visibility.Hidden;
+                StartTcp();
             }
             catch (Exception exc)
             {
@@ -125,7 +132,7 @@ namespace WpfNotifierClient
             try
             {
                 _logger.Trace("start of AsyncFill, keep track of index to just show 10 last results");
-                while (_connectionFlag)
+                while (ConnectionFlag)
                 {
                     _index++;
                     if (_index > 10)
@@ -181,7 +188,7 @@ namespace WpfNotifierClient
             }
             catch (SocketException ex)
             {
-                _connectionFlag = false;
+                ConnectionFlag = false;
                 _logger.Error("TCP Connection failed with this error : " +  ex.Message);
                 MessageBox.Show("امکان ارتباط با سرور برقرار نمیباشد. اتصال شبکه خود را چک کنید.");
                 MessageBox.Show("از برنامه در حالت آفلاین استفاده خواهید کرد");
@@ -192,45 +199,46 @@ namespace WpfNotifierClient
         private void Reconnect_Click(object sender, RoutedEventArgs e)
         {
             ReconnectButton.Visibility = Visibility.Hidden;
-            _connectionFlag = true;
+            ConnectionFlag = true;
             StartTcp();
         }
 
-        private void Login_Click(object sender, RoutedEventArgs e)
-        {
-            var accessLevel = LoginCheck(txtName.Text,txtPassword.Password);
-            if (accessLevel > -1)
-            {
-                //_connection.UpdateLastLogin(txtName.Text);
-                LoginLayer.Visibility = Visibility.Collapsed;
-                if (!_connectionFlag)
-                {
-                    _connectionFlag = true;
-                    _accessLevel = accessLevel;
-                    StartTcp();
-                }
-            }
-            else
-            {
-                txtPassword.Password = "";
-                txtName.Text = "";
-                InfoTextBlock.Text = "خطا! دوباره وارد کنید";
-            }
-        }
+        //private void Login_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var accessLevel = LoginCheck(txtName.Text,txtPassword.Password);
+        //    if (accessLevel > -1)
+        //    {
+        //        //_connection.UpdateLastLogin(txtName.Text);
+        //        LoginLayer.Visibility = Visibility.Collapsed;
+        //        if (!ConnectionFlag)
+        //        {
+        //            ConnectionFlag = true;
+        //            AccessLevel = accessLevel;
+        //            StartTcp();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        txtPassword.Password = "";
+        //        txtName.Text = "";
+        //        InfoTextBlock.Text = "خطا! دوباره وارد کنید";
+        //    }
+        //}
 
-        private int LoginCheck(string username, string password)
-        {
-            if (password.Equals("salaam"))
-                return 5;
-            var user = _connection.SelectUserFromDb(username);
-            return user != null? user.Password.Equals(password)  ? user.AccessLevel : -1 :-1;
-        }
+        //private int LoginCheck(string username, string password)
+        //{
+        //    if (password.Equals("salaam"))
+        //        return 5;
+        //    var user = _connection.SelectUserFromDb(username);
+        //    return user != null? user.Password.Equals(password)  ? user.AccessLevel : -1 :-1;
+        //}
 
         private void MenuItem_lock(object sender, RoutedEventArgs e)
         {
-            txtPassword.Password = "";
-            txtName.Text = "";
-            LoginLayer.Visibility = Visibility.Visible;
+            Visibility = Visibility.Collapsed;
+            new LoginForm().ShowDialog();
+            if (AccessLevel == -1) Close();
+            Visibility = Visibility.Visible;
         }
 
         private void MenuItem_IntervalReport(object sender, RoutedEventArgs e)
@@ -242,10 +250,12 @@ namespace WpfNotifierClient
 
         private void MenuItem_signOut(object sender, RoutedEventArgs e)
         {
-            _connectionFlag = false;
-            txtPassword.Password = "";
-            txtName.Text = "";
-            LoginLayer.Visibility = Visibility.Visible;
+            ConnectionFlag = false;
+            Visibility = Visibility.Collapsed;
+            new LoginForm().ShowDialog();
+            if (AccessLevel == -1) Close();
+            Visibility = Visibility.Visible;
+            StartTcp();
         }
 
         private void MenuItem_createNewUser(object sender, RoutedEventArgs e)

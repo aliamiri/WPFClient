@@ -1,0 +1,17 @@
+﻿<Window x:Class="WpfNotifierClient.LoginForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="صفحه ورود" Height="151" Width="273">
+    <Grid>
+        <Menu>
+
+
+        </Menu>
+        <TextBlock  Name="MessageBlock" TextAlignment="Center" Text="لطفا اطلاعات خود را وارد کنید" Margin="0,5,0,0" VerticalAlignment="Top" FontSize="20" RenderTransformOrigin="0.502,-0.074"/>
+        <Label Content="رمز عبور" Margin="205,67,10,0" VerticalAlignment="Top" RenderTransformOrigin="0.929,0.625"/>
+        <Label Content="نام کاربری" Margin="203,41,10,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TxtUsername" Height="23" Margin="10,37,144,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <PasswordBox x:Name="TxtPass" Margin="10,65,144,0" VerticalAlignment="Top"/>
+        <Button Content="ورود" Margin="95,90,95,0" VerticalAlignment="Top" Width="75" Height="21" Click="Button_Click"/>
+    </Grid>
+</Window>
