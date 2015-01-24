@@ -20,12 +20,12 @@ namespace WpfNotifierClient.UIPages
                 Closing += Closing_True;
         }
 
-        private void Closing_False(object sender, System.ComponentModel.CancelEventArgs e)
+        private static void Closing_False(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = false;
         }
 
-        private void Closing_True(object sender, System.ComponentModel.CancelEventArgs e)
+        private static void Closing_True(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
         }
