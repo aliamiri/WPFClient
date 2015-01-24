@@ -1,9 +1,9 @@
-﻿<Window x:Class="WpfNotifierClient.CreateUser"
+﻿<Window x:Class="WpfNotifierClient.UIPages.CreateUser"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ایجاد کاربر" Height="285.767" Width="300">
+        Title="ایجاد کاربر" Height="285.767" Width="300"  MinHeight="285.767" MinWidth="300"  MaxHeight="285.767" MaxWidth="300">
     <Grid Margin="0,0,0,0">
-        <Grid Name="CreateUserGrid"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="DarkKhaki" Height="239" Margin="10,0,10,7" Width="272">
+        <Grid Name="CreateUserGrid"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="DarkKhaki" Height="256" Width="292">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="8*"/>
                 <ColumnDefinition Width="9*"/>

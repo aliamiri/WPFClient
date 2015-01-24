@@ -1,4 +1,4 @@
-﻿namespace WpfNotifierClient
+﻿namespace WpfNotifierClient.UIPages
 {
     partial class TaskbarNotifier
     {

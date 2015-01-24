@@ -1,8 +1,8 @@
-﻿<Window x:Class="WpfNotifierClient.IntervalReportWindow"
+﻿<Window x:Class="WpfNotifierClient.UIPages.IntervalReportWindow"
    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:persianToolKit="http://schemas.microsoft.com/wpf/2008/toolkit" FontFamily="Tahoma"
-    Title="گزارش بازه" Height="498" Width="458"  MinHeight="260" MinWidth="400">
+    Title="گزارش بازه" Height="498" Width="458"  MinHeight="498" MinWidth="458" MaxHeight="498" MaxWidth="458">
 
     <Grid Margin="0,0,0,31" >
         <Menu Margin="0,0,-9,-36"/>

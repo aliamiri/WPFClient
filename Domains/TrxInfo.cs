@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WpfNotifierClient
+namespace WpfNotifierClient.Domains
 {
     class TrxInfo
     {

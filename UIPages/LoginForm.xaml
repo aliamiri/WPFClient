@@ -1,7 +1,7 @@
-﻿<Window x:Class="WpfNotifierClient.LoginForm"
+﻿<Window x:Class="WpfNotifierClient.UIPages.LoginForm"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="صفحه ورود" Height="151" Width="273">
+        Title="صفحه ورود" Height="151" Width="273" MinHeight="151" MinWidth="273" MaxHeight="151" MaxWidth="273">
     <Grid>
         <Menu>
 

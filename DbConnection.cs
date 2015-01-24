@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using NLog;
+using WpfNotifierClient.Domains;
 
 
 namespace WpfNotifierClient
@@ -88,7 +90,7 @@ namespace WpfNotifierClient
                 sqliteCmd.ExecuteNonQuery();
             }
 
-            if (!sqliteDatareader.IsClosed)
+                        if (!sqliteDatareader.IsClosed)
             {
                 sqliteDatareader.Close();
             }
@@ -161,7 +163,7 @@ namespace WpfNotifierClient
                     };
                     retList.Add(info);
                 }
-
+                sqLiteDataReader.Close();
                 return retList;
             }
             catch (Exception e)
@@ -184,7 +186,7 @@ namespace WpfNotifierClient
                 var command = _connection.CreateCommand();
                 command.CommandText = query;
                 var sqLiteDataReader = command.ExecuteReader();
-
+                
                 while (sqLiteDataReader.Read())
                 {
                     var user = new User
@@ -193,8 +195,11 @@ namespace WpfNotifierClient
                         Password = sqLiteDataReader.GetString(2),
                         AccessLevel = sqLiteDataReader.GetInt32(3)
                     };
+                    sqLiteDataReader.Close();
                     return user;
+
                 }
+                sqLiteDataReader.Close();
                 return null;
             }
             catch (Exception e)
@@ -203,7 +208,7 @@ namespace WpfNotifierClient
                 return null;
             }
             finally
-            {
+            {   
                 _connection.Close();
             }
         }
@@ -215,7 +220,7 @@ namespace WpfNotifierClient
                 _logger.Trace("update user login date : " + username);
                 _connection.Open();
                 var loginDate = DateTime.Now.ToString("yyy-MM-dd HH:mm:ss");
-                var query = "UPDATE asanLocalUsers Set lastLogin = '" + loginDate+"' where username = '"+username+"';";
+                var query = "UPDATE asanLocalUsers Set lastLogin = '" + loginDate + "' where 1 = 1";// username = '" + username + "';";
                 var command = _connection.CreateCommand();
                 command.CommandText = query;
                 command.ExecuteNonQuery();

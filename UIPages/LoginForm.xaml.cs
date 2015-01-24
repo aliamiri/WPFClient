@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Data.SQLite;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace WpfNotifierClient
+namespace WpfNotifierClient.UIPages
 {
     /// <summary>
     /// Interaction logic for LoginForm.xaml
@@ -20,23 +10,38 @@ namespace WpfNotifierClient
     {
         private readonly DbConnection _connection;
 
+        public static bool CloseAble = true;
+
         public LoginForm()
         {
             InitializeComponent();
             _connection = new DbConnection();
+            if (!CloseAble)
+                Closing += Closing_True;
         }
 
+        private void Closing_False(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = false;
+        }
+
+        private void Closing_True(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var accessLevel = LoginCheck(TxtUsername.Text, TxtPass.Password);
             if (accessLevel > -1)
             {
                 MainWindow.AccessLevel = accessLevel;
-                //_connection.UpdateLastLogin(txtName.Text);
+                _connection.UpdateLastLogin(TxtUsername.Text);
                 if (!MainWindow.ConnectionFlag)
                 {
                     MainWindow.ConnectionFlag = true;
                 }
+                Closing += Closing_False;
+                CloseAble = true;
                 Close();
             }
             else

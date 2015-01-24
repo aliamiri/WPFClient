@@ -1,7 +1,7 @@
-﻿<Window x:Class="WpfNotifierClient.MainWindow"
+﻿<Window x:Class="WpfNotifierClient.UIPages.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="سیستم اطلاع رسانی پایانه آسان پرداخت" Height="437" Width="449">
+        Title="سیستم اطلاع رسانی پایانه آسان پرداخت" Height="437" Width="449" MaxHeight="437" MinWidth="449" MinHeight="437" MaxWidth="449">
 
     <Grid >
             <Menu>

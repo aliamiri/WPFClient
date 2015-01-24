@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using WpfNotifierClient.Domains;
 
-namespace WpfNotifierClient
+namespace WpfNotifierClient.UIPages
 {
     /// <summary>
     /// Interaction logic for CreateUser.xaml

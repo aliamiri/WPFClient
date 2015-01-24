@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WpfNotifierClient.Properties;
 
-namespace WpfNotifierClient
+namespace WpfNotifierClient.UIPages
 {
     public partial class TaskbarNotifier : Form
     {

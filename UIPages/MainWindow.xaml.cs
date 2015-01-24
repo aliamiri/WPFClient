@@ -8,10 +8,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
-using  NLog;
+using NLog;
+using WpfNotifierClient.Domains;
 
-namespace WpfNotifierClient
+namespace WpfNotifierClient.UIPages
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -236,8 +236,10 @@ namespace WpfNotifierClient
         private void MenuItem_lock(object sender, RoutedEventArgs e)
         {
             Visibility = Visibility.Collapsed;
+            LoginForm.CloseAble = false;
             new LoginForm().ShowDialog();
             if (AccessLevel == -1) Close();
+
             Visibility = Visibility.Visible;
         }
 
