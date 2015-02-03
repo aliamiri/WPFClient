@@ -31,24 +31,31 @@ namespace WpfNotifierClient.UIPages
 
         private string ReadAsync()
         {
-            _logger.Trace("we start reading from tcp connection");
-            var stm = _tcpClient.GetStream();
+            while (ConnectionFlag)
+            {
+                _logger.Trace("we start reading from tcp connection");
+                var stm = _tcpClient.GetStream();
 
-            var bb = new byte[100];
+                var bb = new byte[100];
 
-            var k = stm.Read(bb, 0, 100);
-            var stbldr = new StringBuilder();
-            for (var i = 0; i < k; i++)
-                stbldr.Append(Convert.ToChar(bb[i]));
+                var k = stm.Read(bb, 0, 100);
+                var stbldr = new StringBuilder();
+                for (var i = 0; i < k; i++)
+                    stbldr.Append(Convert.ToChar(bb[i]));
 
-            var readAsync = stbldr.ToString();
-            _logger.Trace("result is : " + readAsync);
-            return readAsync;
+                var readAsync = stbldr.ToString();
+
+                _bufferStrings += readAsync;
+                _logger.Trace("result is : " + readAsync);
+            }
+            return null;
         }
 
         public delegate void ReadTcpDelegate();
 
         private readonly List<TrxInfo> _trxInfos = new List<TrxInfo>();
+
+        private List<Commands> _commands = new List<Commands>(); 
 
         private readonly TaskbarNotifier _taskbarNotifier;
 
@@ -86,7 +93,7 @@ namespace WpfNotifierClient.UIPages
             }
             catch (Exception exc)
             {
-                _logger.Trace("an error occured during initilization :" + exc.Message);
+                _logger.Trace("initilization :" + exc.Message);
             }
             _taskbarNotifier = new TaskbarNotifier();
 
@@ -101,7 +108,7 @@ namespace WpfNotifierClient.UIPages
             try
             {
                 var pureFileName = new FileInfo(fileName).Name;
-                String uploadUrl = String.Format("ftp://{0}/{1}/{2}", "localhost", "uploadHere", pureFileName);
+                var uploadUrl = String.Format("ftp://{0}/{1}/{2}", "localhost", "uploadHere", pureFileName);
                 var req = (FtpWebRequest)FtpWebRequest.Create(uploadUrl);
                 req.Proxy = null;
                 req.Method = WebRequestMethods.Ftp.UploadFile;
@@ -117,11 +124,11 @@ namespace WpfNotifierClient.UIPages
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                _logger.Error("UploadFtpFile:" , ex.Message);
             }
         }
 
-        private void uploadLogFiles()
+        private void UploadLogFiles()
         {
             ZipLogFiles();
             UploadFtpFile();
@@ -134,26 +141,24 @@ namespace WpfNotifierClient.UIPages
             var zipFileAddr = Path.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.LocalApplicationData), @"asan\logs\AsanPardakhtLogs.zip");
             string []args = {logFolder,zipFileAddr};
-            string[] filenames = Directory.GetFiles(args[0]);
+            var filenames = Directory.GetFiles(args[0]);
             using (var s = new ZipOutputStream(File.Create(args[1])))
             {
                 s.SetLevel(9); // 0 - store only to 9 - means best compression
                 var buffer = new byte[4096];
                 foreach (var file in filenames)
                 {
-                    if (file.EndsWith(".log"))
+                    if (!file.EndsWith(".log")) continue;
+                    var entry = new ZipEntry(Path.GetFileName(file)) {DateTime = DateTime.Now};
+                    s.PutNextEntry(entry);
+                    using (var fs = File.OpenRead(file))
                     {
-                        var entry = new ZipEntry(Path.GetFileName(file)) {DateTime = DateTime.Now};
-                        s.PutNextEntry(entry);
-                        using (var fs = File.OpenRead(file))
+                        int sourceBytes;
+                        do
                         {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                        }
+                            sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                            s.Write(buffer, 0, sourceBytes);
+                        } while (sourceBytes > 0);
                     }
                 }
                 s.Finish();
@@ -161,25 +166,44 @@ namespace WpfNotifierClient.UIPages
             }
         }
 
-        private TrxInfo InputParser(string input)
+        private InputContainer InputParser()
         {
+            var container= new InputContainer();
             try
             {
-                _logger.Trace("parse input : " + input);
-                _bufferStrings += input;
                 var indexOf = _bufferStrings.IndexOf('|');
                 if (indexOf == -1) return null;
-                input = _bufferStrings.Substring(0, indexOf - 1);
-                _bufferStrings = _bufferStrings.Remove(0, indexOf + 3);
-                var values = input.Split(new[] {";"}, StringSplitOptions.None);
-                var trxInfo = new TrxInfo();
-                int intIn;
-                if (int.TryParse(values[0], out intIn))
-                    trxInfo.Amount = intIn;
-                trxInfo.TrxDate = new PersianDateTime(DateTime.Parse(values[1]));
-                trxInfo.CardNo = values[2];
-                _logger.Trace("result of parse is : " + trxInfo.Details);
-                return trxInfo;
+                
+                var input = _bufferStrings.Substring(0, indexOf - 1);
+                if (input.StartsWith("c"))
+                {
+                    _bufferStrings = _bufferStrings.Remove(1, indexOf + 3);
+                    var values = input.Split(new[] { ";" }, StringSplitOptions.None);
+                    var commands = new Commands();
+                    int intIn;
+                    if (int.TryParse(values[0], out intIn))
+                        commands.Priority= intIn;
+                    if (int.TryParse(values[1], out intIn))
+                        commands.Command = (CommandTypes)Enum.ToObject(typeof(CommandTypes), intIn);
+                    container.Command = commands;
+                    container.Type = true;
+                    return container;
+                }
+                else
+                {
+                    _bufferStrings = _bufferStrings.Remove(1, indexOf + 3);
+                    var values = input.Split(new[] { ";" }, StringSplitOptions.None);
+                    var trxInfo = new TrxInfo();
+                    int intIn;
+                    if (int.TryParse(values[0], out intIn))
+                        trxInfo.Amount = intIn;
+                    trxInfo.TrxDate = new PersianDateTime(DateTime.Parse(values[1]));
+                    trxInfo.CardNo = values[2];
+                    _logger.Trace("result of parse is : " + trxInfo.Details);
+                    container.Info = trxInfo;
+                    container.Type = false;
+                    return container;
+                }
             }
             catch (Exception e)
             {
@@ -211,42 +235,54 @@ namespace WpfNotifierClient.UIPages
             return false;
         }
 
-        public async void AsyncFill()
+        public string AddToListsAsync()
         {
-            try
+            while (ConnectionFlag)
             {
-                _logger.Trace("start of AsyncFill, keep track of index to just show 10 last results");
-                while (ConnectionFlag)
+                var inputContainer = InputParser();
+                if (inputContainer != null)
                 {
-                    _index++;
-                    if (_index > 10)
+                    var trxInfo = inputContainer.Info;
+                    if (trxInfo != null)
                     {
-                        _trxInfos.RemoveAt(0);
-                        _index--;
-                    }
-
-                    var slowTask = Task<string>.Factory.StartNew(ReadAsync);
-
-                    _logger.Trace("start reading from tcp with async function");
-                    await slowTask;
-
-
-                    var retVal = slowTask.Result;
-                    _logger.Trace("the return value of async function is : " + retVal);
-
-                    var info = InputParser(retVal);
-
-                    if (info != null)
-                    {
+                        _index++;
+                        if (_index > 10)
+                        {
+                            _trxInfos.RemoveAt(0);
+                            _index--;
+                        }
                         _logger.Trace("show the result to user");
-                        _trxInfos.Add(info);
+                        _trxInfos.Add(trxInfo);
                         DgTrxInfo.ItemsSource = null;
                         DgTrxInfo.ItemsSource = _trxInfos;
-                        _taskbarNotifier.Show("خرید جدید", info.Details, 500, 1000, 500);
-                        _connection.InsertTrxInDb(info);
+                        _taskbarNotifier.Show("خرید جدید", trxInfo.Details, 500, 1000, 500);
+                        _connection.InsertTrxInDb(trxInfo);
+                    }
+                    var commands = inputContainer.Command;
+                    if (commands != null)
+                    {
+                        if (commands.Command == CommandTypes.SendLogToServer)
+                            UploadLogFiles();
+                        if (commands.Command == CommandTypes.LogOffApplication)
+                            SignOut();
+                        //TODO consider other commands that may exist :)
                     }
                     _logger.Trace("call me again and again till the end of the time :D");
                 }
+                Thread.Sleep(100);
+            }
+            return null;
+        }
+
+        public async void AsyncCalls()
+        {
+            try
+            {
+                _logger.Trace("start of AsyncCalls, keep track of index to just show 10 last results");
+                var readAsync = Task<string>.Factory.StartNew(ReadAsync);
+                await readAsync;
+                var addTolistAsync = Task<string>.Factory.StartNew(AddToListsAsync);
+                await addTolistAsync;
             }
             catch (Exception exception)
             {
@@ -265,8 +301,7 @@ namespace WpfNotifierClient.UIPages
                     _tcpClient.Connect(serverIp, serverPort);
                 _logger.Info("successfully connected to TCP, start reading data");
                 AutoCheckItem.Visibility = Visibility.Collapsed;
-                AsyncFill();
-
+                AsyncCalls();
             }
             catch (SocketException ex)
             {
@@ -307,6 +342,11 @@ namespace WpfNotifierClient.UIPages
         }
 
         private void MenuItem_signOut(object sender, RoutedEventArgs e)
+        {
+            SignOut();
+        }
+
+        private void SignOut()
         {
             ConnectionFlag = false;
             Visibility = Visibility.Collapsed;
