@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AsanPardakhtNotifier.exe" size="1012736">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AsanPardakhtNotifier.exe" size="1014272">
       <assemblyIdentity name="AsanPardakhtNotifier" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>C2TjtoRiuKZVmpPrUOHbptVtvAs=</dsig:DigestValue>
+        <dsig:DigestValue>DI1Cl5PKpIzNJXj5Qdrz5glh9Yc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

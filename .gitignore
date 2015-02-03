@@ -43,3 +43,16 @@ _ReSharper*/
 # Office Temp Files
 ~$*
 *.cache
+*.csproj
+bin/Debug/AsanPardakhtNotifier.application
+bin/Debug/AsanPardakhtNotifier.exe
+*.application
+*.exe
+*.manifest
+*.pdb
+*.application
+*.exe
+*.manifest
+*.pdb
+*.cache
+*.csproj

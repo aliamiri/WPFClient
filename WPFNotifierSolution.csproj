@@ -155,6 +155,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Domains\Commands.cs" />
+    <Compile Include="Domains\InputContainer.cs" />
     <Compile Include="UIPages\CreateUser.xaml.cs">
       <DependentUpon>CreateUser.xaml</DependentUpon>
     </Compile>
