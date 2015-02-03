@@ -56,3 +56,12 @@ bin/Debug/AsanPardakhtNotifier.exe
 *.pdb
 *.cache
 *.csproj
+*.pdb
+*.pdb
+*.manifest
+*.exe
+*.application
+*.pdb
+*.manifest
+*.exe
+*.application
