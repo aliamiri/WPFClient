@@ -4,30 +4,39 @@
         Title="سیستم اطلاع رسانی پایانه آسان پرداخت" Height="437" Width="449" MaxHeight="437" MinWidth="449" MinHeight="437" MaxWidth="449">
 
     <Grid >
-            <Menu>
-                <MenuItem Header="گزارشات" Margin="0,1,0,376">
-                    <MenuItem Header="گزارش بازه ای" Click="MenuItem_IntervalReport"/>
-                    <MenuItem Header="گزارش" />
-                </MenuItem>
-                <MenuItem Header="مدیریت" Margin="0,1,0,376">
-                    <MenuItem Header="قفل" Click="MenuItem_lock"/>
-                    <MenuItem Header="خروج" Click="MenuItem_signOut"/>
-                    <MenuItem Header="تعریف کاربر" Click="MenuItem_createNewUser"/>
-                </MenuItem>
-            </Menu>
-            <DataGrid IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="6,32,5,62" Width="430">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" Width="140" />
-                    <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" Width="140"/>
-                    <DataGridTextColumn Header="مبلغ" Binding="{Binding Amount}" Width="140"/>
-                </DataGrid.Columns>
-                <DataGrid.RowDetailsTemplate>
-                    <DataTemplate>
-                        <TextBlock FlowDirection="RightToLeft" Text="{Binding Details}" Margin="10" />
-                    </DataTemplate>
-                </DataGrid.RowDetailsTemplate>
-            </DataGrid>
-            <Button Click="Reconnect_Click" Content="ارتباط مجدد"  Name="ReconnectButton" Margin="6,350,6,10" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.RowSpan="2">
+            <MenuItem Header="گزارشات" Margin="0,1,0,376">
+                <MenuItem Header="گزارش بازه ای" Click="MenuItem_IntervalReport"/>
+                <MenuItem Name="LoginReportItem" Header="گزارش ورود" Click="MenuItem_LoginReport"/>
+            </MenuItem>
+            <MenuItem Header="مدیریت" Margin="0,1,0,376">
+                <MenuItem Header="قفل" Click="MenuItem_lock"/>
+                <MenuItem Header="خروج" Click="MenuItem_signOut"/>
+                <MenuItem Name="CreateUserItem" Header="تعریف کاربر" Click="MenuItem_createNewUser"/>
+            </MenuItem>
+
+            <MenuItem Header="تنظیمات" Margin="0,1,0,376">
+                <MenuItem Header="چک اتوماتیک ارتباط" Name="AutoCheckItem" IsCheckable="true" Click="MenuItem_AutomaticCheck" />
+                <MenuItem Header="عوض کردن تم" Name="ChangeThemeItem" IsCheckable="true" Click="MenuItem_AutomaticCheck" />
+            </MenuItem>
+        </Menu>
+        <DataGrid Grid.Row="0" IsReadOnly="True" Name="DgTrxInfo" AutoGenerateColumns="False" Margin="6,32,5,18" Width="430">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="تاریخ" Binding="{Binding TrxDate}" Width="140" />
+                <DataGridTextColumn Header="شماره کارت" Binding="{Binding CardNo}" Width="140"/>
+                <DataGridTextColumn Header="مبلغ" Binding="{Binding Amount}" Width="140"/>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <TextBlock FlowDirection="RightToLeft" Text="{Binding Details}" Margin="10" />
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        <Button Click="Reconnect_Click" Content="ارتباط مجدد"  Name="ReconnectButton" Margin="6,350,6,10" Grid.RowSpan="2" />
 
         <!--<Grid x:Name="LoginLayer" Background="DarkCyan" Margin="0,0,-9,-54">
             <TextBlock TextAlignment="Center" Text="اطلاعات را وارد کنید" Name="InfoTextBlock" FontWeight="Bold" HorizontalAlignment="Center" Height="60" FontSize="20" Width="296" Margin="76,10,73,259"/>

@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.IO.Compression;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using NLog;
 using WpfNotifierClient.Domains;
+using Timer = System.Timers.Timer;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Impl.Triggers;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace WpfNotifierClient.UIPages
 {
@@ -19,13 +27,13 @@ namespace WpfNotifierClient.UIPages
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
 
-        Logger _logger = LogManager.GetCurrentClassLogger();
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         private string ReadAsync()
         {
             _logger.Trace("we start reading from tcp connection");
             var stm = _tcpClient.GetStream();
-            
+
             var bb = new byte[100];
 
             var k = stm.Read(bb, 0, 100);
@@ -38,34 +46,41 @@ namespace WpfNotifierClient.UIPages
             return readAsync;
         }
 
-        public delegate void NextPrimeDelegate();
+        public delegate void ReadTcpDelegate();
 
-        readonly List<TrxInfo> _trxInfos = new List<TrxInfo>();
+        private readonly List<TrxInfo> _trxInfos = new List<TrxInfo>();
 
-        readonly TaskbarNotifier _taskbarNotifier;
+        private readonly TaskbarNotifier _taskbarNotifier;
 
         private int _index = 0;
         private readonly DbConnection _connection;
-        readonly TcpClient _tcpClient = new TcpClient();
+        private readonly TcpClient _tcpClient = new TcpClient();
         private string _bufferStrings = "";
         public static bool ConnectionFlag = false;
         public static int AccessLevel = 0;
 
         public MainWindow()
         {
-            _logger.Info("Program starts");          
+            _logger.Info("Program starts");
             try
             {
-                
                 _logger.Info("Initilization");
-        
+
                 _connection = new DbConnection();
                 _connection.CreateConnection();
-                
+
                 new LoginForm().ShowDialog();
-                if(AccessLevel == -1)
+                if (AccessLevel == -1)
+                {
                     Close();
+                    return;
+                }
                 InitializeComponent();
+                if (AccessLevel < 5)
+                {
+                    CreateUserItem.Visibility = Visibility.Collapsed;
+                    LoginReportItem.Visibility = Visibility.Collapsed;
+                }
                 ReconnectButton.Visibility = Visibility.Hidden;
                 StartTcp();
             }
@@ -74,14 +89,77 @@ namespace WpfNotifierClient.UIPages
                 _logger.Trace("an error occured during initilization :" + exc.Message);
             }
             _taskbarNotifier = new TaskbarNotifier();
-            
+
             DgTrxInfo.ItemsSource = _trxInfos;
-
-           // CheckFistTime();
-
-
+            // CheckFistTime();
         }
 
+        public void UploadFtpFile()
+        {
+            var fileName = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData), @"asan\logs\AsanPardakhtLogs.zip");
+            try
+            {
+                var pureFileName = new FileInfo(fileName).Name;
+                String uploadUrl = String.Format("ftp://{0}/{1}/{2}", "localhost", "uploadHere", pureFileName);
+                var req = (FtpWebRequest)FtpWebRequest.Create(uploadUrl);
+                req.Proxy = null;
+                req.Method = WebRequestMethods.Ftp.UploadFile;
+                //req.Credentials = new NetworkCredential("a.akhondian", "Aa123456%");
+                req.UseBinary = true;
+                req.UsePassive = true;
+                //req.UseDefaultCredentials = true;
+                byte[] data = File.ReadAllBytes(fileName);
+                req.ContentLength = data.Length;
+                Stream stream = req.GetRequestStream();
+                stream.Write(data, 0, data.Length);
+                stream.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void uploadLogFiles()
+        {
+            ZipLogFiles();
+            UploadFtpFile();
+        }
+
+        private void ZipLogFiles()
+        {
+            var logFolder = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData), @"asan\logs");
+            var zipFileAddr = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData), @"asan\logs\AsanPardakhtLogs.zip");
+            string []args = {logFolder,zipFileAddr};
+            string[] filenames = Directory.GetFiles(args[0]);
+            using (var s = new ZipOutputStream(File.Create(args[1])))
+            {
+                s.SetLevel(9); // 0 - store only to 9 - means best compression
+                var buffer = new byte[4096];
+                foreach (var file in filenames)
+                {
+                    if (file.EndsWith(".log"))
+                    {
+                        var entry = new ZipEntry(Path.GetFileName(file)) {DateTime = DateTime.Now};
+                        s.PutNextEntry(entry);
+                        using (var fs = File.OpenRead(file))
+                        {
+                            int sourceBytes;
+                            do
+                            {
+                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                                s.Write(buffer, 0, sourceBytes);
+                            } while (sourceBytes > 0);
+                        }
+                    }
+                }
+                s.Finish();
+                s.Close();
+            }
+        }
 
         private TrxInfo InputParser(string input)
         {
@@ -92,7 +170,7 @@ namespace WpfNotifierClient.UIPages
                 var indexOf = _bufferStrings.IndexOf('|');
                 if (indexOf == -1) return null;
                 input = _bufferStrings.Substring(0, indexOf - 1);
-                _bufferStrings = _bufferStrings.Remove(0, indexOf + 1);
+                _bufferStrings = _bufferStrings.Remove(0, indexOf + 3);
                 var values = input.Split(new[] {";"}, StringSplitOptions.None);
                 var trxInfo = new TrxInfo();
                 int intIn;
@@ -100,7 +178,7 @@ namespace WpfNotifierClient.UIPages
                     trxInfo.Amount = intIn;
                 trxInfo.TrxDate = new PersianDateTime(DateTime.Parse(values[1]));
                 trxInfo.CardNo = values[2];
-                _logger.Trace("result of parse is : " +trxInfo.Details);
+                _logger.Trace("result of parse is : " + trxInfo.Details);
                 return trxInfo;
             }
             catch (Exception e)
@@ -119,12 +197,18 @@ namespace WpfNotifierClient.UIPages
             var configFile = Path.Combine(appPath, "App.config");
             var isFirstTime = ConfigurationManager.AppSettings["isFirstTime"];
             if (!isFirstTime.Equals("true")) return;
-            var configFileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
-            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+            var configFileMap = new ExeConfigurationFileMap {ExeConfigFilename = configFile};
+            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap,
+                ConfigurationUserLevel.None);
             config.AppSettings.Settings["isFirstTime"].Value = "false";
-            config.Save(ConfigurationSaveMode.Full);    
+            config.Save(ConfigurationSaveMode.Full);
             //TODO configuration for database
             //TODO show a window to set merchant name and this type of ...
+        }
+
+        private bool CheckRedundantData(TrxInfo info)
+        {
+            return false;
         }
 
         public async void AsyncFill()
@@ -166,7 +250,7 @@ namespace WpfNotifierClient.UIPages
             }
             catch (Exception exception)
             {
-                _logger.Error("an exception occured : "+ exception.Message);
+                _logger.Error("an exception occured : " + exception.Message);
             }
         }
 
@@ -177,25 +261,23 @@ namespace WpfNotifierClient.UIPages
             _logger.Info("before connecting to TCP with address : " + serverIp + " on port : " + serverPort);
             try
             {
-                if(!_tcpClient.Connected)
+                if (!_tcpClient.Connected)
                     _tcpClient.Connect(serverIp, serverPort);
                 _logger.Info("successfully connected to TCP, start reading data");
+                AutoCheckItem.Visibility = Visibility.Collapsed;
                 AsyncFill();
-//                var dispatcher = Application.Current.MainWindow.Dispatcher;
-//                dispatcher.BeginInvoke(
-//                    DispatcherPriority.Normal,
-//                    new NextPrimeDelegate(AsyncFill));
+
             }
             catch (SocketException ex)
             {
                 ConnectionFlag = false;
-                _logger.Error("TCP Connection failed with this error : " +  ex.Message);
+                _logger.Error("TCP Connection failed with this error : " + ex.Message);
                 MessageBox.Show("امکان ارتباط با سرور برقرار نمیباشد. اتصال شبکه خود را چک کنید.");
                 MessageBox.Show("از برنامه در حالت آفلاین استفاده خواهید کرد");
                 ReconnectButton.Visibility = Visibility.Visible;
             }
         }
-        
+
         private void Reconnect_Click(object sender, RoutedEventArgs e)
         {
             ReconnectButton.Visibility = Visibility.Hidden;
@@ -203,43 +285,17 @@ namespace WpfNotifierClient.UIPages
             StartTcp();
         }
 
-        //private void Login_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var accessLevel = LoginCheck(txtName.Text,txtPassword.Password);
-        //    if (accessLevel > -1)
-        //    {
-        //        //_connection.UpdateLastLogin(txtName.Text);
-        //        LoginLayer.Visibility = Visibility.Collapsed;
-        //        if (!ConnectionFlag)
-        //        {
-        //            ConnectionFlag = true;
-        //            AccessLevel = accessLevel;
-        //            StartTcp();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        txtPassword.Password = "";
-        //        txtName.Text = "";
-        //        InfoTextBlock.Text = "خطا! دوباره وارد کنید";
-        //    }
-        //}
-
-        //private int LoginCheck(string username, string password)
-        //{
-        //    if (password.Equals("salaam"))
-        //        return 5;
-        //    var user = _connection.SelectUserFromDb(username);
-        //    return user != null? user.Password.Equals(password)  ? user.AccessLevel : -1 :-1;
-        //}
-
         private void MenuItem_lock(object sender, RoutedEventArgs e)
         {
             Visibility = Visibility.Collapsed;
             LoginForm.CloseAble = false;
             new LoginForm().ShowDialog();
             if (AccessLevel == -1) Close();
-
+            if (AccessLevel < 5)
+            {
+                CreateUserItem.Visibility = Visibility.Collapsed;
+                LoginReportItem.Visibility = Visibility.Collapsed;
+            }
             Visibility = Visibility.Visible;
         }
 
@@ -257,6 +313,11 @@ namespace WpfNotifierClient.UIPages
             new LoginForm().ShowDialog();
             if (AccessLevel == -1) Close();
             Visibility = Visibility.Visible;
+            if (AccessLevel < 5)
+            {
+                CreateUserItem.Visibility = Visibility.Collapsed;
+                LoginReportItem.Visibility = Visibility.Collapsed;
+            }
             StartTcp();
         }
 
@@ -265,6 +326,85 @@ namespace WpfNotifierClient.UIPages
             new CreateUser().Show();
         }
 
+        private void MenuItem_LoginReport(object sender, RoutedEventArgs e)
+        {
+            new LoginReport().Show();
+        }
+
+        private void MenuItem_AutomaticCheck(object sender, RoutedEventArgs e)
+        {
+            ConnectAutomaticly();
+        }
+
+        public delegate void ConnectTcpDelegate();
+
+        private Timer _aTimer;
+
+        private void ConnectAutomaticly()
+        {
+            // Create a timer with a two second interval.
+//            _aTimer = new Timer(10000);
+            // Hook up the Elapsed event for the timer. 
+//            _aTimer.Elapsed += OnTimedEvent;
+//            _aTimer.Enabled = true;
+//            _b = AutoCheckItem.IsChecked;
+
+            ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+            _scheduler = schedulerFactory.GetScheduler();
+            _scheduler.Start();
+            MessageBox.Show("Starting Scheduler");
+
+            AddJob();
+        }
+
+        private static IScheduler _scheduler;
+        private bool _b;
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            //if (!ConnectionFlag && _b)
+            //    StartTcp();
+            //else
+            //    _aTimer.Enabled = false;
+
+        }
+
+        public static void AddJob()
+        {
+            IMyJob myJob = new MyJob(); //This Constructor needs to be parameterless
+            var jobDetail = new JobDetailImpl("Job1", "Group1", myJob.GetType());
+            var trigger = new CronTriggerImpl("Trigger1", "Group1", "0/30 * 8-17 * * ?");
+                //run every minute between the hours of 8am and 5pm
+            _scheduler.ScheduleJob(jobDetail, trigger);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            if(_scheduler != null )
+                if(_scheduler.IsStarted)
+                    _scheduler.Shutdown();
+            base.OnClosed(e);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
+
+    internal class MyJob : IMyJob
+    {
+        public void Execute(IJobExecutionContext context)
+        {
+            MessageBox.Show("In MyJob class");
+            DoMoreWork();
+        }
+
+        public void DoMoreWork()
+        {
+            MessageBox.Show("Do More Work");
+        }
+    }
+
+    internal interface IMyJob : IJob
+    {
+    }
+
 }

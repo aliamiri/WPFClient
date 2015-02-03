@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using NLog;
@@ -51,6 +50,7 @@ namespace WpfNotifierClient
             }
         }
 
+
         private void CheckDbExistance()
         {
             _connection.Open();
@@ -69,6 +69,10 @@ namespace WpfNotifierClient
                 sqliteCmd.CommandText =
                     "CREATE TABLE asanTrxInfo(id integer primary key, TrxDate DateTime,CardNo varchar(20),Amount integer );";
                 sqliteCmd.ExecuteNonQuery();
+
+                //TODO check indexing :D
+                sqliteCmd.CommandText = "CREATE INDEX test_index ON asanTrxInfo(TrxDate);";
+
             }
 
             if (!sqliteDatareader.IsClosed)
@@ -89,8 +93,7 @@ namespace WpfNotifierClient
                     "CREATE TABLE asanLocalUsers(id integer primary key, username varchar(20) not null unique,password varchar(20),accessLevel integer,lastLogin DateTime);";
                 sqliteCmd.ExecuteNonQuery();
             }
-
-                        if (!sqliteDatareader.IsClosed)
+            if (!sqliteDatareader.IsClosed)
             {
                 sqliteDatareader.Close();
             }
@@ -213,6 +216,44 @@ namespace WpfNotifierClient
             }
         }
 
+        public List<User> SelectAllUsers()
+        {
+            try
+            {
+                _connection.Open();
+                const string query = "SELECT * FROM asanLocalUsers;";
+                var command = _connection.CreateCommand();
+                command.CommandText = query;
+                var sqLiteDataReader = command.ExecuteReader();
+
+                var userList = new List<User>();
+
+                while (sqLiteDataReader.Read())
+                {
+                    var user = new User
+                    {
+                        UserName = sqLiteDataReader.GetString(1),
+                        Password = sqLiteDataReader.GetString(2),
+                        AccessLevel = sqLiteDataReader.GetInt32(3),
+                        LastLogin = sqLiteDataReader.IsDBNull(4) ? null:new PersianDateTime(Convert.ToDateTime(sqLiteDataReader.GetString(4))),
+                    };
+                    userList.Add(user);
+
+                }
+                sqLiteDataReader.Close();
+                return userList;
+            }
+            catch (Exception e)
+            {
+                _logger.Error("an exception occured : " + e.Message);
+                return null;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
         public void UpdateLastLogin(string username)
         {
             try
@@ -220,7 +261,7 @@ namespace WpfNotifierClient
                 _logger.Trace("update user login date : " + username);
                 _connection.Open();
                 var loginDate = DateTime.Now.ToString("yyy-MM-dd HH:mm:ss");
-                var query = "UPDATE asanLocalUsers Set lastLogin = '" + loginDate + "' where 1 = 1";// username = '" + username + "';";
+                var query = "UPDATE asanLocalUsers Set lastLogin = '" + loginDate + "' where username = '" + username + "';";
                 var command = _connection.CreateCommand();
                 command.CommandText = query;
                 command.ExecuteNonQuery();

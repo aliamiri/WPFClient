@@ -16,6 +16,7 @@ namespace WpfNotifierClient.UIPages
         {
             InitializeComponent();
             _connection = new DbConnection();
+            MainWindow.AccessLevel = -1;
             if (!CloseAble)
                 Closing += Closing_True;
         }
@@ -29,6 +30,7 @@ namespace WpfNotifierClient.UIPages
         {
             e.Cancel = true;
         }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var accessLevel = LoginCheck(TxtUsername.Text, TxtPass.Password);

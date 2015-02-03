@@ -48,3 +48,15 @@ D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\UIPages\Cr
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\UIPages\IntervalReportWindow.g.cs
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\UIPages\LoginForm.g.cs
 D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\UIPages\MainWindow.g.cs
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\UIPages\LoginReport.baml
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\obj\Debug\UIPages\LoginReport.g.cs
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Common.Logging.Core.dll
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Common.Logging.dll
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Quartz.dll
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Common.Logging.pdb
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Common.Logging.xml
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Common.Logging.Core.pdb
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Common.Logging.Core.xml
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Quartz.pdb
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\Quartz.xml
+D:\VSPrj\TestWindowsService\WpfApplication2\WpfApplication2\bin\Debug\ICSharpCode.SharpZipLib.dll
