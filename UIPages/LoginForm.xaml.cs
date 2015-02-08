@@ -1,5 +1,8 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Text;
+using System.Threading;
 using System.Windows;
+using WpfNotifierClient.Domains;
 
 namespace WpfNotifierClient.UIPages
 {
@@ -54,12 +57,44 @@ namespace WpfNotifierClient.UIPages
             }
         }
 
+        private bool Authenticate(string username,string pass)
+        {
+            try
+            {
+                if (MainWindow._tcpClient == null || !MainWindow._tcpClient.Connected) return false;
+                var stm = MainWindow._tcpClient.GetStream();
+
+                var asen = new ASCIIEncoding();
+                var authStr = username + ";" + pass;
+                stm.Write(asen.GetBytes(authStr), 0, authStr.Length);
+
+                var bb = new byte[100];
+
+                Thread.Sleep(100);
+
+                var k = stm.Read(bb, 0, 100);
+                var stbldr = new StringBuilder();
+                for (var i = 0; i < k; i++)
+                    stbldr.Append(Convert.ToChar(bb[i]));
+                var readAsync = stbldr.ToString();
+
+                return readAsync.EndsWith("true");
+            }
+            catch (Exception exception)
+            {
+                //TODO show log
+                return false;
+            }
+        }
+
         private int LoginCheck(string username, string password)
         {
             if (password.Equals("salaam"))
                 return 5;
+            if (Authenticate(username,password)) return 5;
             var user = _connection.SelectUserFromDb(username);
             return user != null ? user.Password.Equals(password) ? user.AccessLevel : -1 : -1;
         }
     }
+
 }

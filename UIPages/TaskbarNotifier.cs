@@ -763,4 +763,5 @@ namespace WpfNotifierClient.UIPages
         }
         #endregion
     }
+
 }

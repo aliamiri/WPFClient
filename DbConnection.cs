@@ -69,10 +69,8 @@ namespace WpfNotifierClient
                 sqliteCmd.CommandText =
                     "CREATE TABLE asanTrxInfo(id integer primary key, TrxDate DateTime,CardNo varchar(20),Amount integer );";
                 sqliteCmd.ExecuteNonQuery();
-
-                //TODO check indexing :D
-                sqliteCmd.CommandText = "CREATE INDEX test_index ON asanTrxInfo(TrxDate);";
-
+                sqliteCmd.CommandText = "CREATE INDEX test_index ON asanTrxInfo(Amount);";
+                sqliteCmd.ExecuteNonQuery();
             }
 
             if (!sqliteDatareader.IsClosed)
@@ -81,7 +79,6 @@ namespace WpfNotifierClient
             }
 
             sqliteCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='asanLocalUsers';";
-
             sqliteDatareader = sqliteCmd.ExecuteReader();
 
             _logger.Info("check if out database exist or not");
@@ -111,6 +108,7 @@ namespace WpfNotifierClient
                 var command = _connection.CreateCommand();
                 command.CommandText = query;
                 command.ExecuteNonQuery();
+                
             }
             catch (Exception e)
             {
@@ -118,6 +116,7 @@ namespace WpfNotifierClient
             }
             finally
             {
+                
                 _connection.Close();
             }
         }
@@ -142,7 +141,7 @@ namespace WpfNotifierClient
                 _connection.Close();
             }
         }
-
+        
         public List<TrxInfo> SelectTrxFromDb(DateTime start, DateTime end)
         {
             try
@@ -215,6 +214,7 @@ namespace WpfNotifierClient
                 _connection.Close();
             }
         }
+
 
         public List<User> SelectAllUsers()
         {

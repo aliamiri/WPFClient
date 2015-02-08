@@ -4,7 +4,6 @@
     {
         public int Priority { get; set; }
         public CommandTypes Command { get; set; }
-
     }
 
     enum CommandTypes
@@ -13,5 +12,4 @@
         LogOffApplication,
         GoFuckYourself //TODO replace this command with appreciated command :D
     }
-
 }

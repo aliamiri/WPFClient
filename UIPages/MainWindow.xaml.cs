@@ -13,7 +13,6 @@ using System.Timers;
 using System.Windows;
 using NLog;
 using WpfNotifierClient.Domains;
-using Timer = System.Timers.Timer;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Triggers;
@@ -29,15 +28,13 @@ namespace WpfNotifierClient.UIPages
 
         #region 
 
-        public delegate void ReadTcpDelegate();
-
         private readonly List<TrxInfo> _trxInfos = new List<TrxInfo>();
 
         private readonly TaskbarNotifier _taskbarNotifier;
 
         private int _index = 0;
         private readonly DbConnection _connection;
-        private readonly TcpClient _tcpClient = new TcpClient();
+        public static TcpClient _tcpClient = new TcpClient();
         private string _bufferStrings = "";
         public static bool ConnectionFlag = false;
         public static int AccessLevel = 0;
@@ -74,6 +71,8 @@ namespace WpfNotifierClient.UIPages
                 _connection = new DbConnection();
                 _connection.CreateConnection();
 
+                StartTcp();
+
                 new LoginForm().ShowDialog();
                 if (AccessLevel == -1)
                 {
@@ -87,7 +86,7 @@ namespace WpfNotifierClient.UIPages
                     LoginReportItem.Visibility = Visibility.Collapsed;
                 }
                 ReconnectButton.Visibility = Visibility.Hidden;
-                StartTcp();
+                
             }
             catch (Exception exc)
             {
@@ -308,7 +307,8 @@ namespace WpfNotifierClient.UIPages
                     _tcpClient.Connect(serverIp, serverPort);
                 _logger.Info("successfully connected to TCP, start reading data");
                 AutoCheckItem.Visibility = Visibility.Collapsed;
-                AsyncCalls();
+                //TODO hal konam in moshkel! AsyncCalls();
+                ConnectionFlag = true;
             }
             catch (SocketException ex)
             {
